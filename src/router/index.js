@@ -17,6 +17,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     }
+    // ↓ 追加
+    {
+      path: '/toppage',
+      name: 'Toppage',
+      component: () => import('../views/Toppage.vue')
+    }
   ]
 })
 
