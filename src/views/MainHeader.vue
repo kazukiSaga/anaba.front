@@ -10,12 +10,7 @@
 
         <li class="right-links">
           <router-link to="/">ユーザー登録</router-link>
-        </li>
-        <li class="right-links">
           <router-link to="/about">ログイン</router-link>
-        </li>
-        <li class="right-links">
-          <router-link to="/about">ユーザー登録</router-link>
         </li>
       </ul>
     </nav>
@@ -48,18 +43,19 @@ nav ul {
   margin: 0;
   width: 100%;
   align-items: center;
+  justify-content: flex-start; /* 全て左寄せ */
 }
 
 .search-form {
-  flex-grow: 1;
+  margin-right: 20px; /* 検索フォームと右側のリンクの間に20pxのスペースを設定 */
 }
 
 .right-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.5rem; /* リンク間のスペース */
 }
 
-input[type="text"] {
+input[type='text'] {
   padding: 0.5rem;
   border: 2px solid black;
   border-radius: 4px;
