@@ -10,6 +10,7 @@ import SpotEditPage from '../views/SpotEditPage.vue'
 import CommentNewPage from '../views/CommentNewPage.vue'
 import CommentShowPage from '../views/CommentShowPage.vue'
 import CommentIndexPage from '../views/CommentIndexPage.vue'
+import NotFound from '../views/NotFound.vue'
 
 const routes = [
   {
@@ -67,6 +68,11 @@ const routes = [
     path: '/spots/:id/comments/index/',
     name: 'comment_index',
     component: CommentIndexPage
+  },
+  {
+    path: '/*',
+    name: 'error404',
+    component: NotFound
   }
 ]
 
