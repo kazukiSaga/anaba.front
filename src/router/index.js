@@ -25,8 +25,8 @@ const routes = [
     component: AboutView
   },
   {
-    path: '/usercreate', // ユーザー登録ページのルート
-    name: 'Usercreate',
+    path: '/sing_up', // ユーザー登録ページのルート
+    name: 'sing_up',
     component: Usercreate
   },
   {
