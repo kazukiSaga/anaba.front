@@ -70,7 +70,7 @@ const routes = [
     component: CommentIndexPage
   },
   {
-    path: '/*',
+    path: '/:pathMatch(.*)*',
     name: 'error404',
     component: NotFound
   }
