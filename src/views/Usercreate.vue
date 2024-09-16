@@ -1,36 +1,53 @@
 <template>
   <div class="register-page">
-    <main-header />
-    <h1>ユーザー登録</h1>
+    <h1>サインアップ</h1>
     <form>
       <div class="form-group">
-        <input type="text" id="username" placeholder="ニックネーム" />
+        <input v-model="email" type="email" id="email" placeholder="アドレス" />
       </div>
 
       <div class="form-group">
-        <input type="email" id="email" placeholder="アドレス" />
+        <input v-model="password" type="password" id="password" placeholder="パスワード" />
       </div>
 
       <div class="form-group">
-        <input type="password" id="password" placeholder="パスワード" />
+        <input
+          v-model="passwordConfirmation"
+          type="password"
+          id="confirm-password"
+          placeholder="パスワード確認"
+        />
       </div>
 
-      <div class="form-group">
-        <input type="password" id="confirm-password" placeholder="パスワード確認" />
-      </div>
-
-      <button type="button">登録</button>
+      <button type="button" @click="signup">登録</button>
     </form>
   </div>
 </template>
 
-<script>
-import MainHeader from './MainHeader.vue'
+<script setup>
+import { ref, computed } from 'vue'
+import axios from '../plugins/axios'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  components: {
-    MainHeader
-  }
+const email = ref(null)
+const password = ref(null)
+const passwordConfirmation = ref(null)
+
+const router = useRouter()
+
+const signup = () => {
+  axios
+    .post(`/api/v1/auth`, {
+      email: email.value,
+      password: password.value
+    })
+    .then((response) => {
+      localStorage.setItem('access-token', response.headers['access-token'])
+      localStorage.setItem('client', response.headers['client'])
+      localStorage.setItem('uid', response.headers['uid'])
+      alert('登録しました。')
+      router.push({ path: '/' })
+    })
 }
 </script>
 
@@ -77,7 +94,7 @@ button {
   width: 100%;
   padding: 15px;
   font-size: 24px;
-  background-color: #4169E1;
+  background-color: #4169e1;
   color: white;
   border: none;
   border-radius: 5px;
@@ -86,6 +103,6 @@ button {
 }
 
 button:hover {
-  background-color: #0000CD;
+  background-color: #0000cd;
 }
 </style>
