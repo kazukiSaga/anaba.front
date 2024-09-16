@@ -2,15 +2,12 @@
   <header>
     <nav>
       <ul>
-        <li class="search-form">
-          <form>
-            <input type="text" placeholder="検索フォーム" />
-          </form>
-        </li>
-
         <li class="right-links">
-          <router-link to="/">ユーザー登録</router-link>
-          <router-link to="/about">ログイン</router-link>
+          <router-link to="/">トップ</router-link>
+          <router-link v-if="!loggedIn" to="/login">ログイン</router-link>
+          <router-link v-if="!loggedIn" to="/sing_up">ユーザー登録</router-link>
+          <button v-if="loggedIn" @click="redirectSpotNew">スポット投稿</button>
+          <button v-if="loggedIn" @click="logout">ログアウト</button>
         </li>
       </ul>
     </nav>
@@ -18,7 +15,44 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
+import axios from '../plugins/axios'
 import { RouterLink } from 'vue-router'
+import router from '@/router'
+
+const loggedIn = computed(() => {
+  const token = localStorage.getItem('access-token')
+  return token !== null
+})
+
+const logout = () => {
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
+
+  axios
+    .delete('/api/v1/auth/sign_out', {
+      test: { test: 'test' },
+      headers: {
+        uid: uid,
+        'access-token': token,
+        client: client
+      }
+    })
+    .then((response) => {
+      localStorage.removeItem('uid')
+      localStorage.removeItem('access-token')
+      localStorage.removeItem('client')
+      alert('ログアウトしました。')
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
+const redirectSpotNew = () => {
+  router.push({ name: 'spot_new' })
+}
 </script>
 
 <style scoped>
