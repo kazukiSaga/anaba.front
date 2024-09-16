@@ -1,14 +1,12 @@
 <template>
   <div class="full-background">
-    <main-header />
     <div class="content-background">
       <div class="toppage">
-
         <div class="text-container">
           <h1><span class="big-A">A</span>naba</h1>
           <ul>
             <li>
-              <router-link to="/about">穴場スポット一覧</router-link>
+              <router-link to="/spots">穴場スポット一覧</router-link>
             </li>
             <li>
               <router-link to="/map">穴場スポットMAP</router-link>
@@ -16,34 +14,18 @@
           </ul>
         </div>
         <div class="logo">
-          <img :src="logo" alt="Logo" class="logo-image" />
+          <img src="@/assets/camera8.svg" alt="Logo" class="logo-image" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import MainHeader from '../views/MainHeader.vue'
-import logo from '../assets/camera8.svg' // ロゴのインポート
-
-export default {
-  components: {
-    MainHeader
-  },
-  data() {
-    return {
-      logo  // ロゴ画像をデータに含める
-    }
-  }
-}
-</script>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
-</style>
+<script></script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
 /* 背景は白のまま */
 .full-background {
   background-color: white;
@@ -56,7 +38,7 @@ export default {
 
 .toppage {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: flex-start;
   width: 100%;
   padding-right: 50px;
@@ -64,7 +46,7 @@ export default {
 
 .text-container {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   margin-left: 50px;
 }
 
@@ -89,7 +71,7 @@ export default {
   list-style: none;
   padding: 0;
   margin-top: 5px;
-  margin-left: 80px; 
+  margin-left: 80px;
 }
 
 .text-container ul li {
@@ -111,6 +93,6 @@ export default {
 
 .logo-image {
   width: 400px;
-  height: auto; 
+  height: auto;
 }
 </style>
