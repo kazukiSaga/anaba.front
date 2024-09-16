@@ -37,16 +37,23 @@ const router = useRouter()
 
 const signup = () => {
   axios
-    .post(`/api/v1/auth`, {
-      email: email.value,
-      password: password.value
-    })
+    .post(
+      `/api/v1/auth`,
+      {
+        email: email.value,
+        password: password.value
+      },
+      { withCredentials: true }
+    )
     .then((response) => {
       localStorage.setItem('access-token', response.headers['access-token'])
       localStorage.setItem('client', response.headers['client'])
       localStorage.setItem('uid', response.headers['uid'])
       alert('登録しました。')
       router.push({ path: '/' })
+    })
+    .catch((error) => {
+      console.error('登録に失敗しました:', error)
     })
 }
 </script>
