@@ -32,6 +32,7 @@
         width="300px"
         height="auto"
         class="my-2 mr-2"
+        @click="router.push({ name: 'spot_show', params: { id: spot.id } })"
       >
         <v-card-item>
           <v-card-title class="mt-2 mb-4 text-body-3"> 投稿一覧</v-card-title>
