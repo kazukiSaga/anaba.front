@@ -81,11 +81,13 @@ import { ref, computed, onMounted } from 'vue'
 import axios from '../plugins/axios'
 import Qs from 'qs'
 import PaginationModule from './PaginationModule.vue'
+import { useRoute, useRouter } from 'vue-router'
 
 onMounted(() => {
   fetchSpots(1)
 })
 
+const router = useRouter()
 const spots = ref([])
 const prefectures = ref([])
 const q = ref({
