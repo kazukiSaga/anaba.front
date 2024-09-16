@@ -1,35 +1,48 @@
 <template>
   <div class="register-page">
-    <main-header />
     <h1>ログイン</h1>
     <form>
       <div class="form-group">
-        <label for="username">ユーザー名</label>
-        <input type="text" id="username" placeholder="ニックネーム" />
-      </div>
-
-      <div class="form-group">
-        <label for="email">メールアドレス</label>
-        <input type="email" id="email" placeholder="アドレス" />
+        <labelquiet_rating for="email">メールアドレス</labelquiet_rating>
+        <input type="email" v-model="email" id="email" placeholder="アドレス" />
       </div>
 
       <div class="form-group">
         <label for="password">パスワード</label>
-        <input type="password" id="password" placeholder="パスワード" />
+        <input type="password" v-model="password" id="password" placeholder="パスワード" />
       </div>
 
-      <button type="button">ログイン</button>
+      <button type="button" @click="login">ログイン</button>
     </form>
   </div>
 </template>
 
-<script>
-import MainHeader from './MainHeader.vue'
+<script setup>
+import { ref, computed } from 'vue'
+import axios from '../plugins/axios'
+import { useRoute, useRouter } from 'vue-router'
 
-export default {
-  components: {
-    MainHeader
-  }
+const email = ref(null)
+const password = ref(null)
+const router = useRouter()
+
+const login = () => {
+  axios
+    .post('api/v1/auth/sign_in', {
+      email: email.value,
+      password: password.value
+    })
+    .then((response) => {
+      console.log(response)
+      localStorage.setItem('access-token', response.headers['access-token'])
+      localStorage.setItem('client', response.headers['client'])
+      localStorage.setItem('uid', response.headers['uid'])
+      alert('ログインしました。')
+      router.push({ path: '/' })
+    })
+    .catch((error) => {
+      console.error(error)
+    })
 }
 </script>
 
@@ -76,7 +89,7 @@ button {
   width: 100%;
   padding: 15px;
   font-size: 24px;
-  background-color: #4169E1;
+  background-color: #4169e1;
   color: white;
   border: none;
   border-radius: 5px;
@@ -85,6 +98,6 @@ button {
 }
 
 button:hover {
-  background-color: #0000CD;
+  background-color: #0000cd;
 }
 </style>
