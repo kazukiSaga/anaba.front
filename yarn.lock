@@ -696,7 +696,7 @@
     "@vue/compiler-dom" "3.5.6"
     "@vue/shared" "3.5.6"
 
-"@vue/devtools-api@^6.6.3":
+"@vue/devtools-api@^6.5.0", "@vue/devtools-api@^6.6.3":
   version "6.6.4"
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.4.tgz#cbe97fe0162b365edc1dba80e173f90492535343"
   integrity sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==
@@ -2602,10 +2602,12 @@ vue-eslint-parser@^9.4.3:
     lodash "^4.17.21"
     semver "^7.3.6"
 
-vue-router@3.5.3:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.5.3.tgz#041048053e336829d05dafacf6a8fb669a2e7999"
-  integrity sha512-FUlILrW3DGitS2h+Xaw8aRNvGTwtuaxrRkNSHWTizOfLUie7wuYwezeZ50iflRn8YPV5kxmU2LQuu3nM/b3Zsg==
+vue-router@4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.2.2.tgz#b0097b66d89ca81c0986be03da244c7b32a4fd81"
+  integrity sha512-cChBPPmAflgBGmy3tBsjeoe3f3VOSG6naKyY5pjtrqLGbNEXdzCigFUHgBvp9e3ysAtFtEx7OLqcSDh/1Cq2TQ==
+  dependencies:
+    "@vue/devtools-api" "^6.5.0"
 
 vue@^3.4.29:
   version "3.5.6"
