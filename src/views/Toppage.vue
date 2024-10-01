@@ -25,11 +25,39 @@
       <GoogleMap
         class="google-map"
         :api-key="apiKey"
+        map-id="7eee96cd28abb9a0"
         style="width: 100%; height: 800px"
         :center="center"
-        :zoom="15"
+        :zoom="9"
       >
         <Marker :options="{ position: center }" />
+        <!-- 将来、AdvancedMarkerElementに移行する場合は、下記を上記に入れる -->
+        <!-- <AdvancedMarker :options="markerOptions" :pin-options="pinOptions" /> -->
+        <Marker
+          v-for="spot in spots"
+          :key="spot.id"
+          :options="markerOptions(spot)"
+          @mouseover="openInfoWindow(spot.id)"
+          @mouseout="hideInfoWindow"
+        >
+          <InfoWindow v-model="isInfoWindowVisible" v-if="infoWindowid === spot.id">
+            <div>
+              <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.rating }}
+              <br />
+              <router-link :to="'/spot/' + spot.id">詳細を見る</router-link>
+            </div>
+          </InfoWindow>
+        </Marker>
+
+        <!-- <Marker :options="markerOptions" @mouseover="showInfoWindow = true" @mouseout="showInfoWindow = false">
+          <InfoWindow v-model="showInfoWindow">
+            <div>
+              <strong>{{ spot.name }}</strong> - 評価: {{ spot.rating }}
+              <br />
+              スポット詳細リンク  <router-link :to="'/spot/' + spot.id">詳細を見る</router-link> 
+            </div>
+          </InfoWindow>
+        </Marker> -->
       </GoogleMap>
     </div>
   </div>
@@ -37,11 +65,41 @@
 
 <script setup>
 // script ロジック、動き、データ定義
-
-import { GoogleMap, Marker } from 'vue3-google-map'
+import { ref } from 'vue'
+// 将来、AdvancedMarkerへ移行する場合はMarkerをAdvancedMarkerへ置き換えてインポートする
+import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map'
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const center = { lat: 35.65856, lng: 139.745461 }
+
+const spots = ref([
+  { id: 1, name: '東京タワー', rating: 4.5, lat: 35.65856, lng: 139.745461 },
+  { id: 2, name: 'スカイツリー', rating: 4.8, lat: 35.710063, lng: 139.8107 }
+])
+
+
+//ポップアップ表示非表示のフラグ
+const isInfoWindowVisible = ref(false)
+const infoWindowid = ref(null)
+
+const markerOptions = (spot) => ({
+  position: { lat: spot.lat, lng: spot.lng },
+  title: spot.name
+  // clickable: false
+})
+
+const openInfoWindow = (id) => {
+  infoWindowid.value = id
+  isInfoWindowVisible.value = true
+}
+
+const hideInfoWindow = () => {
+  infoWindowid.value = null
+  isInfoWindowVisible.value = false
+}
+
+// 現時点ではAdvancedMarkerのpinOptionsは必要ないが、将来の移行のため保持
+// const pinOptions = { background: '#FBBC04' }
 </script>
 
 <style scoped>
