@@ -65,7 +65,28 @@
 
 <script setup>
 // script ロジック、動き、データ定義
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from '../plugins/axios'
+import { useRouter } from 'vue-router'
+
+onMounted(() => {
+  fetchSpots()  // コンポーネントが表示された時にスポットデータを取得
+})
+
+// スポットデータをAPIから取得する関数
+const fetchSpots = () => {
+  // axiosを使ってRails API ('api/v1/marker_spots') にGETリクエストを送信
+  axios
+    .get('api/v1/marker_spots')
+    .then((res) => {
+      console.log(res.data)
+      spots.value = res.data.spots  // レスポンスデータからスポット情報を`spots`に保存(サンプルデータを上書き)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 // 将来、AdvancedMarkerへ移行する場合はMarkerをAdvancedMarkerへ置き換えてインポートする
 import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map'
 
@@ -73,17 +94,17 @@ const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const center = { lat: 35.65856, lng: 139.745461 }
 
 const spots = ref([
-  { id: 1, name: '東京タワー', rating: 4.5, lat: 35.65856, lng: 139.745461 },
-  { id: 2, name: 'スカイツリー', rating: 4.8, lat: 35.710063, lng: 139.8107 }
+  { id: 1, name: '東京タワー', average_rating: 4.5, average_quiet_rating: 2, lat: 35.65856, lng: 139.745461 },
+  { id: 2, name: 'スカイツリー', average_rating: 4.8, average_quiet_rating: 2.5, lat: 35.710063, lng: 139.8107 }
 ])
-
 
 //ポップアップ表示非表示のフラグ
 const isInfoWindowVisible = ref(false)
 const infoWindowid = ref(null)
 
+//緯度経度を定義
 const markerOptions = (spot) => ({
-  position: { lat: spot.lat, lng: spot.lng },
+  position: { lat: spot.latitude, lng: spot.longitude },
   title: spot.name
   // clickable: false
 })
