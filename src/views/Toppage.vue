@@ -10,9 +10,6 @@
               <li>
                 <router-link to="/spots">穴場スポット一覧</router-link>
               </li>
-              <li>
-                <router-link to="/map">穴場スポットMAP</router-link>
-              </li>
             </ul>
           </div>
           <div class="logo" style="margin-left: 50px">
@@ -38,11 +35,10 @@
           :key="spot.id"
           :options="markerOptions(spot)"
           @mouseover="openInfoWindow(spot.id)"
-          @mouseout="hideInfoWindow"
         >
           <InfoWindow v-model="isInfoWindowVisible" v-if="infoWindowid === spot.id">
             <div>
-              <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.rating }}
+              <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.average_rating }} - 混雑の少なさ: {{ spot.average_quiet_rating }}
               <br />
               <router-link :to="'/spot/' + spot.id">詳細を見る</router-link>
             </div>
@@ -114,10 +110,10 @@ const openInfoWindow = (id) => {
   isInfoWindowVisible.value = true
 }
 
-const hideInfoWindow = () => {
-  infoWindowid.value = null
-  isInfoWindowVisible.value = false
-}
+// const hideInfoWindow = () => {
+//   infoWindowid.value = null
+//   isInfoWindowVisible.value = false
+// }
 
 // 現時点ではAdvancedMarkerのpinOptionsは必要ないが、将来の移行のため保持
 // const pinOptions = { background: '#FBBC04' }
