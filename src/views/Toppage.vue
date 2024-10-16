@@ -38,9 +38,13 @@
         >
           <InfoWindow v-model="isInfoWindowVisible" v-if="infoWindowid === spot.id">
             <div>
-              <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.average_rating }} - 混雑の少なさ: {{ spot.average_quiet_rating }}
+              <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.average_rating }} -
+              混雑の少なさ: {{ spot.average_quiet_rating }}
               <br />
-              <router-link :to="'/spot/' + spot.id">詳細を見る</router-link>
+              <!-- <router-link :to="'/spot/' + spot.id">詳細を見る</router-link> -->
+              <router-link :to="{ name: 'spot_show', params: { id: spot.id } }"
+                >詳細を見る</router-link
+              >
             </div>
           </InfoWindow>
         </Marker>
@@ -66,9 +70,10 @@ import axios from '../plugins/axios'
 import { useRouter } from 'vue-router'
 
 onMounted(() => {
-  fetchSpots()  // コンポーネントが表示された時にスポットデータを取得
+  fetchSpots() // コンポーネントが表示された時にスポットデータを取得
 })
 
+const router = useRouter()
 // スポットデータをAPIから取得する関数
 const fetchSpots = () => {
   // axiosを使ってRails API ('api/v1/marker_spots') にGETリクエストを送信
@@ -76,7 +81,7 @@ const fetchSpots = () => {
     .get('api/v1/marker_spots')
     .then((res) => {
       console.log(res.data)
-      spots.value = res.data.spots  // レスポンスデータからスポット情報を`spots`に保存(サンプルデータを上書き)
+      spots.value = res.data.spots // レスポンスデータからスポット情報を`spots`に保存(サンプルデータを上書き)
     })
     .catch((error) => {
       console.error(error)
@@ -90,8 +95,22 @@ const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const center = { lat: 35.65856, lng: 139.745461 }
 
 const spots = ref([
-  { id: 1, name: '東京タワー', average_rating: 4.5, average_quiet_rating: 2, lat: 35.65856, lng: 139.745461 },
-  { id: 2, name: 'スカイツリー', average_rating: 4.8, average_quiet_rating: 2.5, lat: 35.710063, lng: 139.8107 }
+  {
+    id: 1,
+    name: '東京タワー',
+    average_rating: 4.5,
+    average_quiet_rating: 2,
+    latitude: 35.65856,
+    longitude: 139.745461
+  },
+  {
+    id: 2,
+    name: 'スカイツリー',
+    average_rating: 4.8,
+    average_quiet_rating: 2.5,
+    latitude: 35.710063,
+    longitude: 139.8107
+  }
 ])
 
 //ポップアップ表示非表示のフラグ
