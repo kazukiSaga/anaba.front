@@ -71,8 +71,8 @@
           <!-- <input type="text" id="spot-tags" placeholder="タグを入力 (カンマ区切り)" /> -->
         </v-card-item>
       </v-card>
-      <PaginationModule :pagination="pagination" @get-page="getPage($event)" />
     </v-row>
+      <PaginationModule :pagination="pagination" @get-page="getPage($event)" />
   </div>
 </template>
 
@@ -122,6 +122,7 @@ const fetchSpots = (page) => {
   axios
     .get('api/v1/spots', { params, headers })
     .then((res) => {
+      console.log(res.data)
       spots.value = res.data.spots
       pagination.value = res.data.pagination
       prefectures.value = res.data.prefectures
