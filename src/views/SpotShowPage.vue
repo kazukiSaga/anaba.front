@@ -46,6 +46,12 @@
 
       <v-btn color="orange" @click="createAssessment">送信</v-btn>
     </v-row>
+    <v-row class="mt-4" no-gutters justify="end">
+      <v-btn color="green" @click="router.push({ name: 'comment_index' })">コメント一覧</v-btn>
+    </v-row>
+    <v-row class="mt-1" no-gutters justify="end">
+      <v-btn color="green" @click="router.push({ name: 'comment_new' })">コメント投稿</v-btn>
+    </v-row>
   </v-card>
 </template>
 
@@ -106,7 +112,6 @@ const createAssessment = () => {
 }
 
 const redirectSpotEdit = () => {
-  console.log(route)
   router.push({ name: 'spot_edit', params: { id: route.params.id } })
 }
 
