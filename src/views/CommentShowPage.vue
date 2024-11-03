@@ -14,12 +14,23 @@
       </v-card-item>
 
       <div class="pa-2" style="border: 1px solid black">
-        <p>{{ comment.user.name }}</p>
-        <p>{{ comment.title }}</p>
+        <p>投稿者:{{ comment.user.name }}</p>
       </div>
       <div class="pa-2" style="border: 1px solid black">
-        <p>{{ comment.body }}</p>
+        <p>タイトル:{{ comment.title }}</p>
+        <p>内容:{{ comment.body }}</p>
       </div>
+      <v-row class="mt-3" no-gutters justify="center">
+        <v-img
+          v-for="(image, index) in comment.images"
+          :key="index"
+          :src="image.url"
+          aspect-ratio="16/9"
+          class="mr-2"
+          cover
+          style="max-width: 250px; max-height: 200px"
+        />
+      </v-row>
     </v-card>
   </div>
 </template>
