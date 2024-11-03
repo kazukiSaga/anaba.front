@@ -51,8 +51,6 @@ onMounted(() => {
 
 const setImage = (e) => {
   images.value = e.target.files
-  console.log(images.value)
-  console.log(typeof images.value)
 }
 
 const createComment = () => {
@@ -68,13 +66,28 @@ const createComment = () => {
   }
 
   const formData = new FormData()
-  formData.append('comment[images][]', comment.value.images)
+  // formData.append('comment[images][]', comment.value.images
 
-  Object.entries(images.value).forEach(([key, image]) => {
-    if (image !== undefined && image !== null) {
-      formData.append('comment[images][]', image)
-    }
+  // console.log(images.value)
+  Array.from(images.value).forEach((image) => {
+    formData.append(
+      'comment[images][]',
+      new Blob([image], {
+        type: image.type
+      }),
+      image.name
+    )
   })
+
+  // images.value.forEach((image) => {
+  //   formData.append(
+  //     'comment[images]' + '[]',
+  //     new Blob([image], {
+  //       type: image.type
+  //     }),
+  //     image.name
+  //   )
+  // })
   formData.append('comment[title]', comment.value.title)
   formData.append('comment[body]', comment.value.body)
   axios
