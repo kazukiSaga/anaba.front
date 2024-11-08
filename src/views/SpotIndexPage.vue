@@ -23,6 +23,21 @@
       @update:modelValue="searchSpots"
     />
 
+    {{ q.spot_tags_tag_id_eq }}
+    <v-select
+      :label="'タグ検索'"
+      class="mt-2"
+      v-model="q.spot_tags_tag_id_eq"
+      hint="タグを選択してください"
+      persistent-hint
+      variant="outlined"
+      density="compact"
+      item-title="name"
+      item-value="id"
+      :items="tags"
+      @update:modelValue="searchSpots"
+    />
+
     <v-row justify="center" class="mt-4">
       <v-card
         v-for="(spot, index) in spots"
@@ -36,6 +51,20 @@
       >
         <v-card-item>
           <v-card-title class="mt-2 mb-4 text-body-3"> 投稿一覧</v-card-title>
+          <v-chip-group column>
+            <div class="text-body-1 mt-2">
+              タグ :
+              <v-chip
+                v-for="(tag, tagIndex) in spot.tags"
+                :key="tagIndex"
+                class="ma-1"
+                color="primary"
+                text-color="white"
+              >
+                {{ tag.name }}
+              </v-chip>
+            </div>
+          </v-chip-group>
           <v-text-field
             :label="'タイトル'"
             v-model="spot.name"
@@ -72,7 +101,7 @@
         </v-card-item>
       </v-card>
     </v-row>
-      <PaginationModule :pagination="pagination" @get-page="getPage($event)" />
+    <PaginationModule :pagination="pagination" @get-page="getPage($event)" />
   </div>
 </template>
 
@@ -89,10 +118,12 @@ onMounted(() => {
 
 const router = useRouter()
 const spots = ref([])
+const tags = ref([])
 const prefectures = ref([])
 const q = ref({
   name_cont: null,
-  prefecture_id_eq: null
+  prefecture_id_eq: null,
+  spot_tags_tag_id_eq: null
 })
 const pagination = ref({
   count: null,
@@ -108,6 +139,7 @@ const getPage = (page) => {
 }
 
 const fetchSpots = (page) => {
+  console.log('Search Parameters:', q.value) // デバッグ用
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
@@ -122,10 +154,20 @@ const fetchSpots = (page) => {
   axios
     .get('api/v1/spots', { params, headers })
     .then((res) => {
+      console.log('API Response:', res.data)
       console.log(res.data)
       spots.value = res.data.spots
       pagination.value = res.data.pagination
       prefectures.value = res.data.prefectures
+      tags.value = res.data.tags
+
+      spots.value.forEach((spot, index) => {
+        console.log(`Spot ${index}: ID=${spot.id}, Tag ID=${spot.tag_id}`)
+      })
+
+      // デバッグ用
+      console.log('Prefectures:', prefectures.value)
+      console.log('Tags:', tags.value)
     })
     .catch((error) => {
       console.error(error)
