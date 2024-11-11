@@ -8,7 +8,10 @@
           <div>混雑の少なさ: {{ spot.average_quiet_rating }}</div>
         </v-row>
 
-        <div class="text-body-1 mt-2">タグ:</div>
+        <div class="text-body-1 mt-2">
+          タグ:
+          <v-chip v-for="(tag, index) in spot.tags" :key="index">{{ tag.name }} </v-chip>
+        </div>
         <div class="text-body-1">スポット名：{{ spot.name }}</div>
         <div class="text-body-1">都道府県：{{ spot.prefecture.name }}</div>
       </v-card-item>
