@@ -8,6 +8,7 @@
           <router-link v-if="!loggedIn" to="/sing_up">ユーザー登録</router-link>
           <button v-if="loggedIn" @click="redirectSpotNew">スポット投稿</button>
           <button v-if="loggedIn" @click="logout">ログアウト</button>
+          <button v-if="loggedIn" @click="MyPage">マイページ</button>
         </li>
       </ul>
     </nav>
@@ -20,8 +21,11 @@ import axios from '../plugins/axios'
 import { RouterLink } from 'vue-router'
 import router from '@/router'
 
+import HeaderMyPage from '../views/MyPage.vue'
+
 const loggedIn = computed(() => {
   const token = localStorage.getItem('access-token')
+  console.log('loggedIn:', token !== null)
   return token !== null
 })
 
@@ -52,6 +56,10 @@ const logout = () => {
 
 const redirectSpotNew = () => {
   router.push({ name: 'spot_new' })
+}
+
+const MyPage = () => {
+  router.push({ name: 'MyPage' })
 }
 </script>
 
@@ -86,6 +94,7 @@ nav ul {
 
 .right-links {
   display: flex;
+  align-items: center;
   gap: 1.5rem; /* リンク間のスペース */
 }
 
