@@ -14,6 +14,20 @@
         <v-card-title class="mt-2 mb-4 text-body-3"> スポット投稿</v-card-title>
         <v-text-field :label="'タイトル'" v-model="name" variant="outlined" density="compact" />
         <v-textarea :label="'説明'" v-model="body" variant="outlined" density="compact" />
+        <!-- コンボボックス -->
+        {{ combo }}
+        <v-combobox
+          label="タグを選択もしくは新規登録"
+          v-model="combo"
+          item-title="name"
+          item-value="name"
+          :items="tags"
+          variant="outlined"
+          density="compact"
+          :return-object="false"
+          multiple
+        ></v-combobox>
+        <div>{{ combo }}</div>
         <v-select
           :label="'都道府県'"
           v-model="prefecture_id"
@@ -24,7 +38,7 @@
           :items="prefectures"
         />
         <v-text-field v-model="city" :label="'市町村・番地'" variant="outlined" density="compact" />
-        <!-- <label for="spot-tags">タグ</label> -->n
+        <!-- <label for="spot-tags">タグ</label> -->
         <!-- <input type="text" id="spot-tags" placeholder="タグを入力 (カンマ区切り)" /> -->
       </v-card-item>
 
@@ -44,9 +58,12 @@ import { Loader } from '@googlemaps/js-api-loader'
 
 // データの初期化
 const prefectures = ref([])
+const tags = ref([])
+const selectedTag = ref(null)
 const errors = ref([])
 const name = ref(null)
 const body = ref(null)
+const combo = ref([]) // combo を追加
 const prefecture_id = ref(null)
 const city = ref(null)
 const latitude = ref(null) // 緯度
@@ -85,8 +102,9 @@ const fetchSpot = () => {
   axios
     .get('/api/v1/spots/new', { headers })
     .then((res) => {
-      console.log(res.data.prefectures)
+      console.log(res.data)
       prefectures.value = res.data.prefectures
+      tags.value = res.data.tags
       errors.value = []
     })
     .catch((error) => {
@@ -100,16 +118,16 @@ const geocodeAddress = (address, callback) => {
   geocoder.geocode({ address }, (results, status) => {
     // コールバックでは、results と status のコードをこの順序で保持する 2 つのパラメータを渡す必要がある
     if (status === window.google.maps.GeocoderStatus.OK) {
-      const location = results[0].geometry.location;
+      const location = results[0].geometry.location
 
-      latitude.value = location.lat();
-      longitude.value = location.lng();
+      latitude.value = location.lat()
+      longitude.value = location.lng()
 
-      console.log('緯度 (Latitude):', latitude.value);
-      console.log('経度 (Longitude):', longitude.value);
-      callback();
+      console.log('緯度 (Latitude):', latitude.value)
+      console.log('経度 (Longitude):', longitude.value)
+      callback()
     } else {
-      console.error('Geocoding failed: ' + status);
+      console.error('Geocoding failed: ' + status)
       errors.value = ['住所の変換に失敗しました。'] // エラー処理
     }
   })
@@ -139,8 +157,8 @@ const post = () => {
   address += city.value //市町村・番地を住所に追加
 
   geocodeAddress(address, () => {
-    console.log('Latitude:', latitude.value);  
-    console.log('Longitude:', longitude.value);
+    console.log('Latitude:', latitude.value)
+    console.log('Longitude:', longitude.value)
 
     const params = {
       name: name.value,
@@ -148,7 +166,8 @@ const post = () => {
       prefecture_id: prefecture_id.value,
       city: city.value,
       latitude: latitude.value, // 緯度
-      longitude: longitude.value // 経度
+      longitude: longitude.value, // 経度
+      tags: combo.value // 複数のタグの名前を配列としてサーバーに送信
     }
 
     axios
