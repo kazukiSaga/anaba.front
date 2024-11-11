@@ -1,8 +1,14 @@
 <template>
   <v-card class="pa-2" elevation="16" min-width="800" width="100%" height="600px">
     <v-card-title class="mt-2 mb-4 text-body-3"> 投稿詳細</v-card-title>
-    <v-row justify="end" class="mr-3">
-      <v-btn color="orange" @click="redirectSpotEdit">編集</v-btn>
+    <v-row class="mt-4" no-gutters justify="end">
+      <v-btn class="mx-1" color="green" @click="router.push({ name: 'comment_index' })"
+        >コメント一覧ページへ</v-btn
+      >
+      <v-btn class="mx-1" color="green" @click="router.push({ name: 'comment_new' })"
+        >コメント投稿ページへ</v-btn
+      >
+      <v-btn class="mx-1" color="orange" @click="redirectSpotEdit">編集ページへ</v-btn>
     </v-row>
     <div>
       平均おすすめ度：{{ spot.average_rating }}
@@ -12,46 +18,54 @@
 
     <v-card-item>
       <div>スポット名：{{ spot.name }}</div>
+      <div>
+        タグ:
+        <v-chip
+          v-for="(tag, tagIndex) in spot.tags"
+          :key="tagIndex"
+          class="ma-1"
+          color="primary"
+          text-color="white"
+        >
+          {{ tag.name }}
+        </v-chip>
+      </div>
       <div>説明：{{ spot.body }}</div>
       <div>都道府県：{{ spot.prefecture.name }}</div>
       <div>市町村・番地{{ spot.city }}</div>
       <br />
-      <div>おすすめ度: {{ assessment.rating }}</div>
-      <div>混雑の少なさ: {{ assessment.quiet_rating }}</div>
+      <!-- <div>おすすめ度: {{ assessment.rating }}</div>
+      <div>混雑の少なさ: {{ assessment.quiet_rating }}</div> -->
     </v-card-item>
 
-    <v-row class="mt-4" no-gutters justify="center">
-      <v-col cols="12">
-        <v-select
-          :label="'おすすめ度'"
-          v-model="assessment.rating"
-          variant="outlined"
-          density="compact"
-          item-title="name"
-          item-value="id"
-          :items="ratings"
-        />
-      </v-col>
-      <v-col cols="12">
-        <v-select
-          :label="'混雑の少なさ'"
-          v-model="assessment.quiet_rating"
-          variant="outlined"
-          density="compact"
-          item-title="name"
-          item-value="id"
-          :items="ratings"
-        />
-      </v-col>
-
-      <v-btn color="orange" @click="createAssessment">送信</v-btn>
-    </v-row>
-    <v-row class="mt-4" no-gutters justify="end">
-      <v-btn color="green" @click="router.push({ name: 'comment_index' })">コメント一覧</v-btn>
-    </v-row>
-    <v-row class="mt-1" no-gutters justify="end">
-      <v-btn color="green" @click="router.push({ name: 'comment_new' })">コメント投稿</v-btn>
-    </v-row>
+    <v-card-item>
+      <div>評価をして他のユーザーに情報を共有しましよう</div>
+      <v-row class="mt-4" no-gutters justify="center">
+        <v-col cols="12">
+          <v-select
+            :label="'おすすめ度'"
+            v-model="assessment.rating"
+            variant="outlined"
+            density="compact"
+            item-title="name"
+            item-value="id"
+            :items="ratings"
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-select
+            :label="'混雑の少なさ'"
+            v-model="assessment.quiet_rating"
+            variant="outlined"
+            density="compact"
+            item-title="name"
+            item-value="id"
+            :items="ratings"
+          />
+        </v-col>
+        <v-btn color="orange" @click="createAssessment">送信</v-btn>
+      </v-row>
+    </v-card-item>
   </v-card>
 </template>
 
