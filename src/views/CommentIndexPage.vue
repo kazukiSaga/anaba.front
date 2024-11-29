@@ -1,14 +1,17 @@
 <template>
   <div>
     <h1>コメント一覧</h1>
-    <v-card elevation="16" min-width="800" width="100%" height="600px">
+    <v-card elevation="16" min-width="800" width="100%" height="600px" style="overflow-y: auto">
       <v-card-item style="background-color: yellow">
         <v-row no-gutters justify="end">
           <div class="mr-3">おすすめ度: {{ spot.average_rating }}</div>
           <div>混雑の少なさ: {{ spot.average_quiet_rating }}</div>
         </v-row>
 
-        <div class="text-body-1 mt-2">タグ:</div>
+        <div class="text-body-1 mt-2">
+          タグ:
+          <v-chip v-for="(tag, index) in spot.tags" :key="index">{{ tag.name }} </v-chip>
+        </div>
         <div class="text-body-1">スポット名：{{ spot.name }}</div>
         <div class="text-body-1">都道府県：{{ spot.prefecture.name }}</div>
       </v-card-item>
@@ -40,7 +43,11 @@ import router from '@/router'
 
 const route = useRoute()
 
-const spot = ref({ name: null, prefecture: {} })
+const spot = ref({ 
+  name: null,
+   prefecture: {},
+   tags: []
+   })
 
 onMounted(() => {
   fetchComments()
