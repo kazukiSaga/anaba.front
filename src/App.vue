@@ -26,5 +26,6 @@ body {
   padding: 0;
   width: 1200px;
   height: 1000px;
+  padding-top: 60px;
 }
 </style>
