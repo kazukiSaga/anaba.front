@@ -33,17 +33,11 @@
           </div>
 
           <div v-if="validImages.length > 0" class="text-center mb-3">
-            <p class="click-to-enlarge-text">クリックで拡大</p>
+            <p class="click-to-enlarge-text">画像クリックで拡大</p>
           </div>
 
           <v-row class="mt-3" justify="start">
-            <v-col
-              v-for="(image, index) in validImages"
-              :key="index"
-              cols="12"
-              sm="6"
-              md="4"
-            >
+            <v-col v-for="(image, index) in validImages" :key="index" cols="12" sm="6" md="4">
               <div class="image-container">
                 <v-img
                   :src="image.url"
@@ -88,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../plugins/axios'
 
@@ -98,16 +92,9 @@ const comment = ref({ title: null, body: null, images: [], user: { name: null } 
 
 const isDialogOpen = ref(false)
 const selectedImage = ref('')
-const rotation = ref(0) 
+const rotation = ref(0)
 const scale = ref(1)
-
-const validImages = computed(() =>
-  comment.value.images.filter((image) => {
-    const img = new Image()
-    img.src = image.url
-    return img.complete && img.naturalWidth > 0
-  })
-)
+const validImages = ref([])
 
 const openImage = (url) => {
   selectedImage.value = url
@@ -120,7 +107,6 @@ const closeDialog = () => {
   isDialogOpen.value = false
 }
 
-
 const rotateLeft = () => {
   rotation.value -= 90
 }
@@ -129,13 +115,12 @@ const rotateRight = () => {
   rotation.value += 90
 }
 
-
 const zoomIn = () => {
-  scale.value = Math.min(scale.value + 0.2, 3) 
+  scale.value = Math.min(scale.value + 0.2, 3)
 }
 
 const zoomOut = () => {
-  scale.value = Math.max(scale.value - 0.2, 0.5) 
+  scale.value = Math.max(scale.value - 0.2, 0.5)
 }
 
 onMounted(() => {
@@ -153,7 +138,9 @@ const fetchSpot = () => {
   axios
     .get(`api/v1/spots/${spot_id}/comments/new`, { headers })
     .then((res) => (spot.value = res.data.spot))
-    .catch((error) => console.error(error))
+    .catch(() => {
+      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
+    });
 }
 
 const fetchComment = () => {
@@ -166,9 +153,31 @@ const fetchComment = () => {
   const comment_id = route.params.comment_id
   axios
     .get(`api/v1/spots/${spot_id}/comments/${comment_id}`, { headers })
-    .then((res) => (comment.value = res.data.comment))
-    .catch((error) => console.error(error))
+    .then((res) => {
+      comment.value = res.data.comment
+    })
+    .catch(() => {
+      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
+    });
 }
+watch(
+  () => comment.value.images,
+  (newImages) => {
+    validImages.value = []
+
+    newImages.forEach((image) => {
+      const img = new Image()
+      img.src = image.url
+
+      img.onload = () => {
+        if (img.naturalWidth > 0) {
+          validImages.value.push(image)
+        }
+      }
+    })
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped>
@@ -202,6 +211,9 @@ const fetchComment = () => {
   margin: 16px 0;
 }
 
+.clickable-image {
+  cursor: pointer;
+}
 .zoom-controls {
   display: flex;
   justify-content: center;
@@ -250,7 +262,7 @@ const fetchComment = () => {
 
 @media (min-width: 1024px) {
   .click-to-enlarge-text {
-    font-size: 20px; 
+    font-size: 20px;
   }
 }
 </style>
