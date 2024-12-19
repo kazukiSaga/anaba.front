@@ -1,103 +1,95 @@
 <template>
-  <div class="register-page">
-    <h1>ログイン</h1>
-    <form>
-      <div class="form-group">
-        <labelquiet_rating for="email">メールアドレス</labelquiet_rating>
-        <input type="email" v-model="email" id="email" placeholder="アドレス" />
-      </div>
-
-      <div class="form-group">
-        <label for="password">パスワード</label>
-        <input type="password" v-model="password" id="password" placeholder="パスワード" />
-      </div>
-
-      <button type="button" @click="login">ログイン</button>
-    </form>
-  </div>
+  <v-container class="register-page">
+    <v-row justify="center" align="start" class="fill-height mt-10">
+      <v-col cols="12" md="8" lg="6">
+        <h1 class="text-center mb-6">ログイン</h1>
+        <v-card elevation="12" class="pa-6 large-card">
+          <v-form>
+            <v-text-field
+              v-model="email"
+              label="メールアドレス"
+              outlined
+              dense
+              class="mb-5"
+              type="email"
+              placeholder="アドレス"
+            />
+            <v-text-field
+              v-model="password"
+              label="パスワード"
+              outlined
+              dense
+              class="mb-5"
+              type="password"
+              placeholder="パスワード"
+            />
+            <v-btn color="primary" large block @click="login">
+              ログイン
+            </v-btn>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import axios from '../plugins/axios'
-import { useRoute, useRouter } from 'vue-router'
+import { ref } from "vue";
+import axios from "../plugins/axios";
+import { useRouter } from "vue-router";
 
-const email = ref(null)
-const password = ref(null)
-const router = useRouter()
+const email = ref("");
+const password = ref("");
+const router = useRouter();
 
 const login = () => {
   axios
-    .post('api/v1/auth/sign_in', {
+    .post("api/v1/auth/sign_in", {
       email: email.value,
-      password: password.value
+      password: password.value,
     })
     .then((response) => {
-      console.log(response)
-      localStorage.setItem('access-token', response.headers['access-token'])
-      localStorage.setItem('client', response.headers['client'])
-      localStorage.setItem('uid', response.headers['uid'])
-      alert('ログインしました。')
-      router.push({ path: '/' })
+      localStorage.setItem("access-token", response.headers["access-token"]);
+      localStorage.setItem("client", response.headers["client"]);
+      localStorage.setItem("uid", response.headers["uid"]);
+      alert("ログインしました。");
+      router.push({ path: "/" });
     })
-    .catch((error) => {
-      console.error(error)
-    })
-}
+    .catch(() => {
+      alert("ログインに失敗しました。メールアドレスまたはパスワードを確認してください。");
+    });
+};
 </script>
 
 <style scoped>
 .register-page {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  background-color: #ffffff;
   padding: 20px;
   box-sizing: border-box;
 }
 
+.large-card {
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 12px;
+}
+
 h1 {
-  text-align: center;
-  font-size: 36px;
-  margin-bottom: 30px;
+  font-size: 2.2rem;
   color: #333;
+  margin-top: 0;
+  margin-bottom: 24px;
 }
 
-form {
-  width: 500%;
-  max-width: 900px;
-  padding: 0;
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-.form-group {
-  margin-bottom: 25px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 15px;
-  font-size: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 24px;
-  background-color: #4169e1;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-button:hover {
-  background-color: #0000cd;
+.v-btn {
+  text-transform: none;
+  font-size: 1.2rem;
+  padding: 12px;
 }
 </style>
+
