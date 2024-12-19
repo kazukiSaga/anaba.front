@@ -5,7 +5,7 @@
         <li class="right-links">
           <router-link to="/">トップ</router-link>
           <router-link v-if="!loggedIn" to="/login">ログイン</router-link>
-          <router-link v-if="!loggedIn" to="/sing_up">ユーザー登録</router-link>
+          <router-link v-if="!loggedIn" to="/sign_up">ユーザー登録</router-link>
           <button v-if="loggedIn" @click="redirectSpotNew">スポット投稿</button>
           <button v-if="loggedIn" @click="logout">ログアウト</button>
           <button v-if="loggedIn" @click="MyPage">マイページ</button>
@@ -16,51 +16,47 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import axios from '../plugins/axios'
-import { RouterLink } from 'vue-router'
-import router from '@/router'
-
-import HeaderMyPage from '../views/MyPage.vue'
+import { computed } from "vue";
+import axios from "../plugins/axios";
+import router from "@/router";
 
 const loggedIn = computed(() => {
-  const token = localStorage.getItem('access-token')
-  console.log('loggedIn:', token !== null)
-  return token !== null
-})
+  const token = localStorage.getItem("access-token");
+  return token !== null;
+});
 
 const logout = () => {
-  const token = localStorage.getItem('access-token')
-  const client = localStorage.getItem('client')
-  const uid = localStorage.getItem('uid')
+  const token = localStorage.getItem("access-token");
+  const client = localStorage.getItem("client");
+  const uid = localStorage.getItem("uid");
 
   axios
-    .delete('/api/v1/auth/sign_out', {
-      test: { test: 'test' },
+    .delete("/api/v1/auth/sign_out", {
       headers: {
         uid: uid,
-        'access-token': token,
-        client: client
-      }
+        "access-token": token,
+        client: client,
+      },
     })
-    .then((response) => {
-      localStorage.removeItem('uid')
-      localStorage.removeItem('access-token')
-      localStorage.removeItem('client')
-      alert('ログアウトしました。')
+    .then(() => {
+      localStorage.removeItem("uid");
+      localStorage.removeItem("access-token");
+      localStorage.removeItem("client");
+      alert("ログアウトしました。");
+      router.push({ path: "/" });
     })
-    .catch((error) => {
-      console.error(error)
-    })
-}
+    .catch(() => {
+      alert("ログアウトに失敗しました。もう一度お試しください。");
+    });
+};
 
 const redirectSpotNew = () => {
-  router.push({ name: 'spot_new' })
-}
+  router.push({ name: "spot_new" });
+};
 
 const MyPage = () => {
-  router.push({ name: 'MyPage' })
-}
+  router.push({ name: "MyPage" });
+};
 </script>
 
 <style scoped>
@@ -85,31 +81,46 @@ nav ul {
   margin: 0;
   width: 100%;
   align-items: center;
-  justify-content: flex-start; /* 全て左寄せ */
-}
-
-.search-form {
-  margin-right: 20px; /* 検索フォームと右側のリンクの間に20pxのスペースを設定 */
+  justify-content: flex-start;
 }
 
 .right-links {
   display: flex;
   align-items: center;
-  gap: 1.5rem; /* リンク間のスペース */
+  gap: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-input[type='text'] {
-  padding: 0.5rem;
-  border: 2px solid black;
-  border-radius: 4px;
-}
-
-a {
+a,
+button {
   color: black;
   text-decoration: none;
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
 }
 
-a:hover {
+a:hover,
+button:hover {
   text-decoration: underline;
+}
+
+@media (min-width: 1024px) {
+  a,
+  button {
+    font-size: 1.2rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  a,
+  button {
+    font-size: 0.8rem;
+    gap: 0.3rem;
+  }
 }
 </style>
