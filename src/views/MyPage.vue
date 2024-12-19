@@ -1,144 +1,135 @@
 <template>
-  <div class="mypage-header">
-    <h1>マイページ</h1>
-    <form>
-      <div class="form-group">
-        <label for="nickname">ニックネーム</label>
-        <input v-model="user.name" type="text" placeholder="ニックネームを入力" />
-      </div>
-      <div class="button-group">
-        <button type="button" @click="updateUsername">更新する</button>
-      </div>
-      <p v-if="updateMessage">{{ updateMessage }}</p>
-    </form>
-  </div>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="12" md="8" lg="6">
+        <v-card elevation="16" class="pa-4 custom-card">
+
+          <v-card-title class="text-h5 text-center">マイページ</v-card-title>
+          <v-divider class="mb-4"></v-divider>
+
+          <v-form>
+            <v-text-field
+              label="ニックネーム"
+              v-model="user.name"
+              outlined
+              dense
+              class="mb-4"
+            ></v-text-field>
+
+            <div class="button-wrapper">
+              <v-btn
+                color="orange"
+                class="post-btn"
+                @click="updateUsername"
+              >
+                更新する
+              </v-btn>
+            </div>
+          </v-form>
+
+          <v-alert
+            v-if="updateMessage"
+            type="success"
+            dense
+            text
+            class="mt-4"
+          >
+            {{ updateMessage }}
+          </v-alert>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import axios from '../plugins/axios'
-import { useRoute, useRouter } from 'vue-router'
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "../plugins/axios";
 
-export default {
-  data() {
-    return {
-      user: {
-        name: ''
+const user = ref({ name: "" });
+const updateMessage = ref("");
+
+onMounted(() => {
+  fetchUserName();
+});
+
+const fetchUserName = () => {
+  axios
+    .get("/api/v1/auth/validate_token", {
+      headers: {
+        "access-token": localStorage.getItem("access-token"),
+        client: localStorage.getItem("client"),
+        uid: localStorage.getItem("uid"),
       },
-      updateMessage: ''
-    }
-  },
-  mounted() {
-    console.log("Initial user_id in localStorage:", localStorage.getItem('user_id')); 
-    this.fetchUserName()
-  },
-  methods: {
-    fetchUserName() {
-      axios
-        .get('/api/v1/auth/validate_token', {
-          headers: {
-            'access-token': localStorage.getItem('access-token'),
-            client: localStorage.getItem('client'),
-            uid: localStorage.getItem('uid')
-          }
-        })
-        .then((response) => {
-          console.log('User data:', response.data)
-          this.user.name = response.data.data.name
+    })
+    .then((response) => {
+      user.value.name = response.data.data.name;
+      const userId = response.data.data.id;
+      if (userId) localStorage.setItem("user_id", userId);
+    })
+    .catch(() => {
+      alert("ユーザー名の取得に失敗しました。もう一度お試しください。");
+    });
+};
 
-          const userId = response.data.data.id
-          if (userId) {
-            localStorage.setItem('user_id', userId)
-            console.log('user_id set in localStorage:', userId)
-          }
-        })
-        .catch((error) => {
-          console.error('ユーザー名の取得に失敗しました', error)
-        })
-    },
-    updateUsername() {
-      const userId = localStorage.getItem('user_id')
-      console.log('Updating user_id:', userId)
-
-      axios
-        .patch(
-          `/api/v1/users/${localStorage.getItem('user_id')}`,{ name: this.user.name },
-          {
-            headers: {
-              'access-token': localStorage.getItem('access-token'),
-              client: localStorage.getItem('client'),
-              uid: localStorage.getItem('uid')
-            }
-          }
-        )
-        .then((response) => {
-          this.updateMessage = 'ニックネームが更新されました！'
-          console.log("Update response:", response.data);
-        })
-        .catch((error) => {
-          this.updateMessage = '更新に失敗しました'
-          console.error('更新エラー', error.response || error);
-        })
-    }
-  }
-}
+const updateUsername = () => {
+  const userId = localStorage.getItem("user_id");
+  axios
+    .patch(
+      `/api/v1/users/${userId}`,
+      { name: user.value.name },
+      {
+        headers: {
+          "access-token": localStorage.getItem("access-token"),
+          client: localStorage.getItem("client"),
+          uid: localStorage.getItem("uid"),
+        },
+      }
+    )
+    .then(() => {
+      updateMessage.value = "ニックネームが更新されました！";
+    })
+    .catch(() => {
+      updateMessage.value = "更新に失敗しました。もう一度お試しください。";
+    });
+};
 </script>
 
 <style scoped>
-.mypage-header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-h1 {
-  text-align: center;
-  font-size: 36px;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-form {
+.custom-card {
+  max-width: 100%;
   width: 100%;
-  max-width: 900px;
-  padding: 0;
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
 }
 
-.form-group {
-  margin-bottom: 25px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 15px;
-  font-size: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.button-group {
-  text-align: center;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  font-size: 24px;
-  background-color: #4169e1;
+.post-btn {
+  font-size: 1rem;
+  padding: 8px 16px;
+  background-color: orange;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  width: auto;
 }
 
-button:hover {
-  background-color: #0000cd;
+.post-btn:hover {
+  background-color: darkorange;
+}
+
+.button-wrapper {
+  text-align: center;
+  margin-top: 16px;
+}
+
+@media (min-width: 820px) and (max-width: 1180px) and (orientation: portrait) {
+  .custom-card {
+    max-width: 700px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .custom-card {
+    max-width: 800px;
+  }
 }
 </style>
