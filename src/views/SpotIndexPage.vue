@@ -1,5 +1,5 @@
 <template>
-  <div width="1200px" style="margin-top: 100px !important">
+  <div style="margin-top: 100px !important">
     <v-text-field
       :label="'スポット検索'"
       v-model="q.name_cont"
@@ -23,7 +23,6 @@
       @update:modelValue="searchSpots"
     />
 
-    {{ q.spot_tags_tag_id_eq }}
     <v-select
       :label="'タグ検索'"
       class="mt-2"
@@ -39,78 +38,82 @@
     />
 
     <v-row justify="center" class="mt-4">
-      <v-card
+      <v-col
+        cols="12"
+        sm="6"
+        md="6"
+        lg="6"
         v-for="(spot, index) in spots"
         :key="index"
-        elevation="16"
-        min-width="200"
-        width="300px"
-        height="auto"
-        class="my-2 mr-2"
-        @click="router.push({ name: 'spot_show', params: { id: spot.id } })"
+        class="d-flex"
       >
-        <v-card-item>
-          <v-card-title class="mt-2 mb-4 text-body-3"> 投稿一覧</v-card-title>
-          <v-chip-group column>
-            <div class="text-body-1 mt-2">
-              タグ :
-              <v-chip
-                v-for="(tag, tagIndex) in spot.tags"
-                :key="tagIndex"
-                class="ma-1"
-                color="primary"
-                text-color="white"
-              >
-                {{ tag.name }}
-              </v-chip>
-            </div>
-          </v-chip-group>
-          <v-text-field
-            :label="'タイトル'"
-            v-model="spot.name"
-            variant="outlined"
-            density="compact"
-            readonly
-          />
-          <v-textarea
-            :label="'説明'"
-            readonly
-            v-model="spot.body"
-            variant="outlined"
-            density="compact"
-          />
-          <v-select
-            :label="'都道府県'"
-            v-model="spot.prefecture_id"
-            variant="outlined"
-            density="compact"
-            item-title="name"
-            item-value="id"
-            :items="prefectures"
-            readonly
-          />
-          <v-text-field
-            v-model="spot.city"
-            :label="'市町村・番地'"
-            variant="outlined"
-            density="compact"
-            readonly
-          />
-          <!-- <label for="spot-tags">タグ</label> -->
-          <!-- <input type="text" id="spot-tags" placeholder="タグを入力 (カンマ区切り)" /> -->
-        </v-card-item>
-      </v-card>
+        <v-card
+          elevation="16"
+          class="my-2 w-100"
+          @click="router.push({ name: 'spot_show', params: { id: spot.id } })"
+        >
+          <v-card-item>
+            <v-card-title class="mt-2 mb-4 text-body-3">投稿一覧</v-card-title>
+            <v-chip-group column>
+              <div class="text-body-1 mt-2">
+                タグ :
+                <v-chip
+                  v-for="(tag, tagIndex) in spot.tags"
+                  :key="tagIndex"
+                  class="ma-1"
+                  color="primary"
+                  text-color="white"
+                >
+                  {{ tag.name }}
+                </v-chip>
+              </div>
+            </v-chip-group>
+            <v-text-field
+              :label="'タイトル'"
+              v-model="spot.name"
+              variant="outlined"
+              density="compact"
+              readonly
+            />
+            <v-textarea
+              :label="'説明'"
+              readonly
+              v-model="spot.body"
+              variant="outlined"
+              density="compact"
+            />
+            <v-select
+              :label="'都道府県'"
+              v-model="spot.prefecture_id"
+              variant="outlined"
+              density="compact"
+              item-title="name"
+              item-value="id"
+              :items="prefectures"
+              readonly
+            />
+            <v-text-field
+              v-model="spot.city"
+              :label="'市町村・番地'"
+              variant="outlined"
+              density="compact"
+              readonly
+            />
+          </v-card-item>
+        </v-card>
+      </v-col>
     </v-row>
+
     <PaginationModule :pagination="pagination" @get-page="getPage($event)" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from '../plugins/axios'
 import Qs from 'qs'
 import PaginationModule from './PaginationModule.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 onMounted(() => {
   fetchSpots(1)
@@ -139,7 +142,6 @@ const getPage = (page) => {
 }
 
 const fetchSpots = (page) => {
-  console.log('Search Parameters:', q.value) // デバッグ用
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
@@ -154,23 +156,13 @@ const fetchSpots = (page) => {
   axios
     .get('api/v1/spots', { params, headers })
     .then((res) => {
-      console.log('API Response:', res.data)
-      console.log(res.data)
       spots.value = res.data.spots
       pagination.value = res.data.pagination
       prefectures.value = res.data.prefectures
       tags.value = res.data.tags
-
-      spots.value.forEach((spot, index) => {
-        console.log(`Spot ${index}: ID=${spot.id}, Tag ID=${spot.tag_id}`)
-      })
-
-      // デバッグ用
-      console.log('Prefectures:', prefectures.value)
-      console.log('Tags:', tags.value)
     })
-    .catch((error) => {
-      console.error(error)
+    .catch(() => {
+      alert('スポット情報の取得に失敗しました。');
     })
 }
 
@@ -191,7 +183,6 @@ const searchSpots = () => {
     .get('api/v1/search_spots', {
       params,
       headers,
-      headers,
       paramsSerializer: function (params) {
         return Qs.stringify(params)
       }
@@ -199,10 +190,17 @@ const searchSpots = () => {
     .then((res) => {
       spots.value = res.data.spots
     })
-    .catch((error) => {
-      console.error(error)
+    .catch(() => {
+      alert('検索結果の取得に失敗しました。');
     })
 }
 </script>
 
-<script></script>
+<style scoped>
+/* #app {
+  margin: 0 auto;
+  padding: 0;
+  height: auto;
+  padding-top: 60px;
+} */
+</style>
