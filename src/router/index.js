@@ -10,11 +10,14 @@ import SpotEditPage from '../views/SpotEditPage.vue'
 import CommentNewPage from '../views/CommentNewPage.vue'
 import CommentShowPage from '../views/CommentShowPage.vue'
 import CommentIndexPage from '../views/CommentIndexPage.vue'
+import MyPage from '../views/MyPage.vue'
 import NotFound from '../views/NotFound.vue'
+import TermsOfUsePage from '../views/TermsOfUsePage.vue'
+import PrivacyPolicyPage from '../views/PrivacyPolicyPage.vue'
+
 
 const routes = [
   {
-    //トップページに設定
     path: '/',
     name: 'Toppage',
     component: TopPage
@@ -25,14 +28,19 @@ const routes = [
     component: AboutView
   },
   {
-    path: '/sing_up', // ユーザー登録ページのルート
+    path: '/sing_up',
     name: 'sing_up',
     component: Usercreate
   },
   {
-    path: '/login', // ユーザー登録ページのルート
+    path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/MyPage',
+    name: 'MyPage',
+    component: MyPage
   },
   {
     path: '/spots',
@@ -55,19 +63,29 @@ const routes = [
     component: SpotEditPage
   },
   {
-    path: '/spots/:id/comments/new/',
+    path: '/spots/:id/comments/new',
     name: 'comment_new',
     component: CommentNewPage
   },
   {
-    path: '/spots/:id/comments/show/',
+    path: '/spots/:id/comments',
+    name: 'comment_index',
+    component: CommentIndexPage
+  },
+  {
+    path: '/spots/:id/comments/:comment_id',
     name: 'comment_show',
     component: CommentShowPage
   },
   {
-    path: '/spots/:id/comments/index/',
-    name: 'comment_index',
-    component: CommentIndexPage
+    path: '/terms_of_use',
+    name: 'terms_of_use',
+    component: TermsOfUsePage
+  },
+  {
+    path: '/privacy_policy_page',
+    name: 'privacy_policy_page',
+    component: PrivacyPolicyPage
   },
   {
     path: '/:pathMatch(.*)*',
