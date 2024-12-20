@@ -11,10 +11,5 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  },
-  build: {
-    rollupOptions: {
-      external: ['vue3-google-map']
-    }
   }
 })
