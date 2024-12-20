@@ -42,7 +42,7 @@
           {{ tag.name }}
           <!-- バツボタン -->
           <img
-            src="@/assets/やや太いバツのアイコン2.svg"
+            src="@/assets/closeicon.svg"
             alt="削除"
             class="tag-delete-icon"
           />

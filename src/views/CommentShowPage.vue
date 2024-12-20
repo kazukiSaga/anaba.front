@@ -56,7 +56,7 @@
     <v-dialog v-model="isDialogOpen" max-width="90%">
       <v-card class="dialog-card">
         <img
-          src="@/assets/やや太いバツのアイコン2.svg"
+          src="@/assets/closeicon.svg"
           alt="閉じる"
           class="close-icon"
           @click="closeDialog"
