@@ -68,6 +68,7 @@ import { useRouter } from 'vue-router';
 import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+console.log(apiKey);
 const center = { lat: 35.65856, lng: 139.745461 };
 const spots = ref([]);
 const isInfoWindowVisible = ref(false);
