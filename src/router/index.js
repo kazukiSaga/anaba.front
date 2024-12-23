@@ -28,8 +28,8 @@ const routes = [
     component: AboutView
   },
   {
-    path: '/sing_up',
-    name: 'sing_up',
+    path: '/sign_up',
+    name: 'sign_up',
     component: Usercreate
   },
   {
