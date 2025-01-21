@@ -23,9 +23,7 @@
               type="password"
               placeholder="パスワード"
             />
-            <v-btn color="primary" large block @click="login">
-              ログイン
-            </v-btn>
+            <v-btn color="primary" large block @click="login"> ログイン </v-btn>
           </v-form>
         </v-card>
       </v-col>
@@ -34,31 +32,34 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import axios from "../plugins/axios";
-import { useRouter } from "vue-router";
+import { ref } from 'vue'
+import axios from '../plugins/axios'
+import { useUserStore } from '@/stores/index'
+import { useRouter } from 'vue-router'
 
-const email = ref("");
-const password = ref("");
-const router = useRouter();
+const email = ref('')
+const password = ref('')
+const router = useRouter()
+const userStore = useUserStore()
 
 const login = () => {
   axios
-    .post("api/v1/auth/sign_in", {
+    .post('api/v1/auth/sign_in', {
       email: email.value,
-      password: password.value,
+      password: password.value
     })
     .then((response) => {
-      localStorage.setItem("access-token", response.headers["access-token"]);
-      localStorage.setItem("client", response.headers["client"]);
-      localStorage.setItem("uid", response.headers["uid"]);
-      alert("ログインしました。");
-      router.push({ path: "/" });
+      localStorage.setItem('access-token', response.headers['access-token'])
+      localStorage.setItem('client', response.headers['client'])
+      localStorage.setItem('uid', response.headers['uid'])
+      alert('ログインしました。')
+      router.push({ path: '/' })
+      userStore.setUser(response.data)
     })
     .catch(() => {
-      alert("ログインに失敗しました。メールアドレスまたはパスワードを確認してください。");
-    });
-};
+      alert('ログインに失敗しました。メールアドレスまたはパスワードを確認してください。')
+    })
+}
 </script>
 
 <style scoped>
@@ -92,4 +93,3 @@ h1 {
   padding: 12px;
 }
 </style>
-
