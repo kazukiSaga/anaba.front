@@ -16,47 +16,76 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import axios from "../plugins/axios";
-import router from "@/router";
+import { computed, ref, onMounted } from 'vue'
+import { useUserStore } from '@/stores/index'
+import axios from '../plugins/axios'
+import router from '@/router'
+
+const userStore = useUserStore()
 
 const loggedIn = computed(() => {
-  const token = localStorage.getItem("access-token");
-  return token !== null;
-});
+  return Object.keys(userStore.getUser).length !== 0
+})
 
-const logout = () => {
-  const token = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
+onMounted(() => {
+  fetchUser()
+})
+
+const fetchUser = () => {
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
+  const user_id = localStorage.getItem('user_id')
 
   axios
-    .delete("/api/v1/auth/sign_out", {
+    .get(`/api/v1/users/${user_id}`, {
       headers: {
-        uid: uid,
-        "access-token": token,
+        'access-token': token,
         client: client,
-      },
+        uid: uid
+      }
     })
-    .then(() => {
-      localStorage.removeItem("uid");
-      localStorage.removeItem("access-token");
-      localStorage.removeItem("client");
-      alert("ログアウトしました。");
-      router.push({ path: "/" });
+    .then((res) => {
+      userStore.setUser(res.data.user)
     })
     .catch(() => {
-      alert("ログアウトに失敗しました。もう一度お試しください。");
-    });
-};
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
+}
+
+const logout = () => {
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
+
+  axios
+    .delete('/api/v1/auth/sign_out', {
+      headers: {
+        uid: uid,
+        'access-token': token,
+        client: client
+      }
+    })
+    .then(() => {
+      localStorage.removeItem('uid')
+      localStorage.removeItem('access-token')
+      localStorage.removeItem('client')
+      alert('ログアウトしました。')
+      userStore.deleteUser()
+      router.push({ path: '/' })
+    })
+    .catch(() => {
+      alert('ログアウトに失敗しました。もう一度お試しください。')
+    })
+}
 
 const redirectSpotNew = () => {
-  router.push({ name: "spot_new" });
-};
+  router.push({ name: 'spot_new' })
+}
 
 const MyPage = () => {
-  router.push({ name: "MyPage" });
-};
+  router.push({ name: 'MyPage' })
+}
 </script>
 
 <style scoped>
