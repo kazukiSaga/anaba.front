@@ -62,44 +62,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from '../plugins/axios';
-import { useRouter } from 'vue-router';
-import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map';
+import { ref, onMounted } from 'vue'
+import axios from '../plugins/axios'
+import { useRouter } from 'vue-router'
+import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map'
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-console.log(apiKey);
-const center = { lat: 35.65856, lng: 139.745461 };
-const spots = ref([]);
-const isInfoWindowVisible = ref(false);
-const infoWindowid = ref(null);
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+const center = { lat: 35.65856, lng: 139.745461 }
+const spots = ref([])
+const isInfoWindowVisible = ref(false)
+const infoWindowid = ref(null)
 
-const router = useRouter();
+const router = useRouter()
 
 onMounted(() => {
-  fetchSpots();
-});
+  fetchSpots()
+})
 
 const fetchSpots = () => {
   axios
     .get('api/v1/marker_spots')
     .then((res) => {
-      spots.value = res.data.spots;
+      spots.value = res.data.spots
     })
     .catch(() => {
-      alert('スポット情報の取得に失敗しました。もう一度お試しください。');
-    });
-};
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
+}
 
 const markerOptions = (spot) => ({
   position: { lat: spot.latitude, lng: spot.longitude },
-  title: spot.name,
-});
+  title: spot.name
+})
 
 const openInfoWindow = (id) => {
-  infoWindowid.value = id;
-  isInfoWindowVisible.value = true;
-};
+  infoWindowid.value = id
+  isInfoWindowVisible.value = true
+}
 </script>
 
 <style scoped>
@@ -235,4 +234,3 @@ const openInfoWindow = (id) => {
   }
 }
 </style>
-

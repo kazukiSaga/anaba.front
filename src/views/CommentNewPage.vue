@@ -53,7 +53,7 @@
         <v-col cols="12">
           <label class="file-label">
             <div class="file-box">
-              ファイル選択
+              ファイル選択Ï
               <input type="file" multiple @change="setImage" class="file-input" />
             </div>
           </label>
@@ -71,92 +71,93 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import axios from "../plugins/axios";
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from '../plugins/axios'
 
-const route = useRoute();
-const router = useRouter();
-const spot = ref({ name: null, prefecture: {}, tags: [] });
-const comment = ref({ title: null, body: null });
-const images = ref([]);
+const route = useRoute()
+const router = useRouter()
+const spot = ref({ name: null, prefecture: {}, tags: [] })
+const comment = ref({ title: null, body: null })
+const images = ref([])
 
 onMounted(() => {
-  fetchSpot();
-});
+  fetchSpot()
+})
 
 const selectedFilesMessage = computed(() => {
   if (images.value.length === 0) {
-    return "選択されていません";
+    return '選択されていません'
   }
   return Array.from(images.value)
     .map((file) => file.name)
-    .join(", ");
-});
+    .join(', ')
+})
 
 const setImage = (e) => {
-  images.value = e.target.files;
-};
+  images.value = e.target.files
+}
 
 const createComment = () => {
-  const spot_id = route.params.id;
+  const spot_id = route.params.id
 
-  const token = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
   const headers = {
-    "access-token": token,
+    'Content-Type': 'multipart/form-data',
+    'access-token': token,
     uid: uid,
-    client: client,
-  };
-
-  const formData = new FormData();
+    client: client
+  }
+  const formData = new FormData()
+  console.log(images.value)
   Array.from(images.value).forEach((image) => {
     formData.append(
-      "comment[images][]",
+      'comment[images][]',
       new Blob([image], {
-        type: image.type,
+        type: image.type
       }),
       image.name
-    );
-  });
-  formData.append("comment[title]", comment.value.title);
-  formData.append("comment[body]", comment.value.body);
+    )
+  })
+  formData.append('comment[title]', comment.value.title)
+  formData.append('comment[body]', comment.value.body)
 
   axios
     .post(`api/v1/spots/${spot_id}/comments`, formData, { headers })
     .then((res) => {
-      alert("コメントを作成しました。");
+      alert('コメントを作成しました。')
       router.push({
-        name: "comment_show",
-        params: { id: res.data.spot_id, comment_id: res.data.comment_id },
-      });
+        name: 'comment_show',
+        params: { id: res.data.spot_id, comment_id: res.data.comment_id }
+      })
     })
     .catch(() => {
-      alert("コメントの作成に失敗しました。もう一度お試しください。");
-    });
-};
+      alert('コメントの作成に失敗しました。もう一度お試しください。')
+    })
+}
 
 const fetchSpot = () => {
-  const token = localStorage.getItem("access-token");
-  const client = localStorage.getItem("client");
-  const uid = localStorage.getItem("uid");
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
   const headers = {
-    "access-token": token,
+    'access-token': token,
     uid: uid,
-    client: client,
-  };
+    client: client
+  }
 
-  const spot_id = route.params.id;
+  const spot_id = route.params.id
   axios
     .get(`api/v1/spots/${spot_id}/comments/new`, { headers })
     .then((res) => {
-      spot.value = res.data.spot;
+      spot.value = res.data.spot
     })
     .catch(() => {
-      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
-    });
-};
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
+}
 </script>
 
 <style scoped>
@@ -210,9 +211,3 @@ const fetchSpot = () => {
   font-weight: bold !important;
 }
 </style>
-
-
-
-
-
-
