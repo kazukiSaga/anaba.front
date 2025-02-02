@@ -56,6 +56,7 @@
               ファイル選択Ï
               <input type="file" multiple @change="setImage" class="file-input" />
             </div>
+              対応形式: JPG / JPEG / GIF / PNG のみ
           </label>
           <p class="file-status mt-2">
             {{ selectedFilesMessage }}
