@@ -35,10 +35,9 @@ const fetchUser = () => {
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
-  const user_id = localStorage.getItem('user_id')
 
   axios
-    .get(`/api/v1/users/${user_id}`, {
+    .get(`/api/v1/users`, {
       headers: {
         'access-token': token,
         client: client,
@@ -46,6 +45,7 @@ const fetchUser = () => {
       }
     })
     .then((res) => {
+      console.log(res.data.user)
       userStore.setUser(res.data.user)
     })
     .catch(() => {
