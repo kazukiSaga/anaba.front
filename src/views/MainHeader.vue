@@ -45,7 +45,6 @@ const fetchUser = () => {
       }
     })
     .then((res) => {
-      console.log(res.data.user)
       userStore.setUser(res.data.user)
     })
     .catch(() => {
