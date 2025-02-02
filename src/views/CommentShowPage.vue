@@ -1,7 +1,7 @@
 <template>
-  <v-container>
+  <v-container fluid class="full-width-container">
     <v-row justify="center">
-      <v-col cols="12" sm="10" md="8" lg="6">
+      <v-col cols="12" sm="12" md="8" lg="12">
         <v-card class="custom-card pa-4" elevation="16">
           <v-card-item style="background-color: yellow">
             <v-row no-gutters justify="end">
@@ -32,19 +32,14 @@
             <p>内容:{{ comment.body }}</p>
           </div>
 
-          <div v-if="validImages.length > 0" class="text-center mb-3">
-            <p class="click-to-enlarge-text">画像クリックで拡大</p>
-          </div>
-
-          <v-row class="mt-3" justify="start">
-            <v-col v-for="(image, index) in validImages" :key="index" cols="12" sm="6" md="4">
-              <div class="image-container">
+          <v-row class="mt-3">
+            <v-col v-for="(image, index) in validImages" :key="index" cols="12">
+              <div class="image-wrapper">
                 <v-img
                   :src="image.url"
-                  class="clickable-image"
+                  class="clickable-image full-width-image"
                   aspect-ratio="16/9"
                   cover
-                  @click="openImage(image.url)"
                 />
               </div>
             </v-col>
@@ -52,32 +47,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="isDialogOpen" max-width="90%">
-      <v-card class="dialog-card">
-        <img
-          src="@/assets/closeicon.svg"
-          alt="閉じる"
-          class="close-icon"
-          @click="closeDialog"
-        />
-        <div class="rotate-controls">
-          <v-btn text color="orange" @click="rotateLeft">左回転</v-btn>
-          <v-btn text color="orange" @click="rotateRight">右回転</v-btn>
-        </div>
-        <div class="image-wrapper">
-          <img
-            :src="selectedImage"
-            :style="{ transform: `rotate(${rotation}deg) scale(${scale})` }"
-            class="dialog-image"
-          />
-        </div>
-        <div class="zoom-controls">
-          <v-btn text color="orange" @click="zoomIn">拡大</v-btn>
-          <v-btn text color="orange" @click="zoomOut">縮小</v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -90,38 +59,7 @@ const route = useRoute()
 const spot = ref({ name: null, prefecture: {}, tags: [] })
 const comment = ref({ title: null, body: null, images: [], user: { name: null } })
 
-const isDialogOpen = ref(false)
-const selectedImage = ref('')
-const rotation = ref(0)
-const scale = ref(1)
 const validImages = ref([])
-
-const openImage = (url) => {
-  selectedImage.value = url
-  isDialogOpen.value = true
-  rotation.value = 0
-  scale.value = 1
-}
-
-const closeDialog = () => {
-  isDialogOpen.value = false
-}
-
-const rotateLeft = () => {
-  rotation.value -= 90
-}
-
-const rotateRight = () => {
-  rotation.value += 90
-}
-
-const zoomIn = () => {
-  scale.value = Math.min(scale.value + 0.2, 3)
-}
-
-const zoomOut = () => {
-  scale.value = Math.max(scale.value - 0.2, 0.5)
-}
 
 onMounted(() => {
   fetchSpot()
@@ -139,8 +77,8 @@ const fetchSpot = () => {
     .get(`api/v1/spots/${spot_id}/comments/new`, { headers })
     .then((res) => (spot.value = res.data.spot))
     .catch(() => {
-      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
-    });
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
 }
 
 const fetchComment = () => {
@@ -157,18 +95,19 @@ const fetchComment = () => {
       comment.value = res.data.comment
     })
     .catch(() => {
-      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
-    });
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
 }
 watch(
   () => comment.value.images,
   (newImages) => {
     validImages.value = []
 
+    console.log(newImages)
+
     newImages.forEach((image) => {
       const img = new Image()
       img.src = image.url
-
       img.onload = () => {
         if (img.naturalWidth > 0) {
           validImages.value.push(image)
@@ -181,88 +120,18 @@ watch(
 </script>
 
 <style scoped>
-.dialog-card {
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dialog-image {
-  max-width: 100%;
-  max-height: 80vh;
-  object-fit: contain;
-  transition: transform 0.3s ease-in-out;
-}
-
-.image-wrapper {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: auto;
-}
-
-.rotate-controls {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin: 16px 0;
-}
-
 .clickable-image {
   cursor: pointer;
 }
-.zoom-controls {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin: 16px 0;
+
+.full-width-container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-.rotate-controls v-btn,
-.zoom-controls v-btn {
-  font-size: 16px;
-  padding: 14px 28px;
+.full-width-image {
+  width: 100% !important;
+  height: auto !important;
 }
 
-@media (min-width: 1024px) {
-  .rotate-controls v-btn,
-  .zoom-controls v-btn {
-    font-size: 24px;
-    padding: 20px 40px;
-  }
-}
-
-.close-icon {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-.close-icon:hover {
-  opacity: 0.8;
-}
-
-.image-container {
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.click-to-enlarge-text {
-  font-size: 16px;
-  color: #888;
-  margin-top: 8px;
-}
-
-@media (min-width: 1024px) {
-  .click-to-enlarge-text {
-    font-size: 20px;
-  }
-}
 </style>
