@@ -197,10 +197,4 @@ const searchSpots = () => {
 </script>
 
 <style scoped>
-/* #app {
-  margin: 0 auto;
-  padding: 0;
-  height: auto;
-  padding-top: 60px;
-} */
 </style>
