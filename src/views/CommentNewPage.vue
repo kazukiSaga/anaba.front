@@ -112,7 +112,6 @@ const createComment = () => {
     client: client
   }
   const formData = new FormData()
-  console.log(images.value)
   Array.from(images.value).forEach((image) => {
     formData.append(
       'comment[images][]',
