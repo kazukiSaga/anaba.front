@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 100px !important">
+  <div>
     <v-text-field
       :label="'スポット検索'"
       v-model="q.name_cont"
