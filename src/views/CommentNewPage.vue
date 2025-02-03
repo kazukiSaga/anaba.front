@@ -131,58 +131,52 @@ const selectedFilesMessage = computed(() => {
 })
 
 const createComment = () => {
-  const spot_id = route.params.id;
+  isLoading.value = true
+  const spot_id = route.params.id
 
-  const token = localStorage.getItem('access-token');
-  const client = localStorage.getItem('client');
-  const uid = localStorage.getItem('uid');
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
   const headers = {
     'Content-Type': 'multipart/form-data',
     'access-token': token,
     uid: uid,
     client: client
-  };
-  const formData = new FormData();
+  }
+  const formData = new FormData()
   images.value.forEach((image) => {
-    formData.append(
-      'comment[images][]',
-      new Blob([image], { type: image.type }),
-      image.name
-    );
-  });
-  formData.append('comment[title]', comment.value.title);
-  formData.append('comment[body]', comment.value.body);
-
-  isLoading.value = true;
+    formData.append('comment[images][]', new Blob([image], { type: image.type }), image.name)
+  })
+  formData.append('comment[title]', comment.value.title)
+  formData.append('comment[body]', comment.value.body)
 
   axios
     .post(`api/v1/spots/${spot_id}/comments`, formData, { headers })
     .then((res) => {
-      alert('コメントを作成しました。');
-      errors.value = { title: null, body: null };
+      isLoading.value = false
+
+      errors.value = { title: null, body: null }
       router.push({
         name: 'comment_show',
         params: { id: res.data.spot_id, comment_id: res.data.comment_id }
-      });
+      })
     })
     .catch((error) => {
-      console.error('エラー:', error);
+      console.error('エラー:', error)
       if (error.response && error.response.data.errors) {
-        console.log('バリデーションエラー:', error.response.data.errors);
+        console.log('バリデーションエラー:', error.response.data.errors)
 
-        const errorMessages = error.response.data.errors;
+        const errorMessages = error.response.data.errors
         errors.value = {
           title: errorMessages.title ? errorMessages.title.join('\n') : null,
           body: errorMessages.body ? errorMessages.body.join('\n') : null
-        };
+        }
       } else {
-        alert('コメントの作成に失敗しました。もう一度お試しください。');
+        alert('コメントの作成に失敗しました。もう一度お試しください。')
       }
+      isLoading.value = false
     })
-    .finally(() => {
-      isLoading.value = false;
-    });
-};
+}
 
 const fetchSpot = () => {
   const token = localStorage.getItem('access-token')
