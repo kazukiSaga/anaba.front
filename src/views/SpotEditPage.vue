@@ -167,6 +167,7 @@ const updateSpot = () => {
     name: spot.value.name,
     body: spot.value.body,
     prefecture_id: spot.value.prefecture_id,
+    city: spot.value.city, 
     tags: spot.value.tags.map((tag) => tag.name), 
   };
 
