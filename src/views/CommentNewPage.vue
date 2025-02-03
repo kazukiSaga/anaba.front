@@ -36,6 +36,9 @@
             dense
             class="form-field"
           />
+          <p v-if="errors.title" class="error-text">
+            {{ errors.title }}
+          </p>
         </v-col>
         <v-col cols="12">
           <v-textarea
@@ -46,6 +49,9 @@
             rows="4"
             class="form-field"
           />
+          <p v-if="errors.body" class="error-text">
+            {{ errors.body }}
+          </p>
         </v-col>
       </v-row>
 
@@ -56,16 +62,30 @@
               ファイル選択Ï
               <input type="file" multiple @change="setImage" class="file-input" />
             </div>
-              対応形式: JPG / JPEG / GIF / PNG のみ
+            対応形式: JPG / JPEG / GIF / PNG のみ
           </label>
           <p class="file-status mt-2">
             {{ selectedFilesMessage }}
           </p>
+          <p v-show="fileError" class="error-text">{{ fileError }}</p>
         </v-col>
       </v-row>
 
       <v-row justify="center" class="form-section">
-        <v-btn color="orange" large @click="createComment">投稿</v-btn>
+        <v-btn color="orange" large @click="createComment" :disabled="isLoading">
+          投稿
+          <v-progress-circular
+            v-if="isLoading"
+            indeterminate
+            color="white"
+            size="20"
+            class="ml-2"
+          />
+        </v-btn>
+      </v-row>
+      <v-row justify="center" align="center" v-if="isLoading" class="loading-overlay">
+        <v-progress-circular indeterminate color="orange" size="50" />
+        <p class="loading-text">投稿中です。しばらくお待ちください...</p>
       </v-row>
     </v-card>
   </v-container>
@@ -78,65 +98,91 @@ import axios from '../plugins/axios'
 
 const route = useRoute()
 const router = useRouter()
-const spot = ref({ name: null, prefecture: {}, tags: [] })
-const comment = ref({ title: null, body: null })
+const spot = ref({ name: 'null', prefecture: {}, tags: [] })
+const comment = ref({ title: '', body: '' })
 const images = ref([])
+const fileError = ref(null)
+const isLoading = ref(false)
+const errors = ref({ title: null, body: null })
 
 onMounted(() => {
   fetchSpot()
 })
 
+const setImage = (e) => {
+  fileError.value = null
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+  const files = Array.from(e.target.files)
+
+  if (files.some((file) => !allowedTypes.includes(file.type))) {
+    fileError.value = 'JPG/JPEG/GIF/PNG以外の画像が選択されています'
+    images.value = []
+    return
+  }
+
+  images.value = files
+}
+
 const selectedFilesMessage = computed(() => {
   if (images.value.length === 0) {
     return '選択されていません'
   }
-  return Array.from(images.value)
-    .map((file) => file.name)
-    .join(', ')
+  return images.value.map((file) => file.name).join(', ')
 })
 
-const setImage = (e) => {
-  images.value = e.target.files
-}
-
 const createComment = () => {
-  const spot_id = route.params.id
+  const spot_id = route.params.id;
 
-  const token = localStorage.getItem('access-token')
-  const client = localStorage.getItem('client')
-  const uid = localStorage.getItem('uid')
+  const token = localStorage.getItem('access-token');
+  const client = localStorage.getItem('client');
+  const uid = localStorage.getItem('uid');
   const headers = {
     'Content-Type': 'multipart/form-data',
     'access-token': token,
     uid: uid,
     client: client
-  }
-  const formData = new FormData()
-  Array.from(images.value).forEach((image) => {
+  };
+  const formData = new FormData();
+  images.value.forEach((image) => {
     formData.append(
       'comment[images][]',
-      new Blob([image], {
-        type: image.type
-      }),
+      new Blob([image], { type: image.type }),
       image.name
-    )
-  })
-  formData.append('comment[title]', comment.value.title)
-  formData.append('comment[body]', comment.value.body)
+    );
+  });
+  formData.append('comment[title]', comment.value.title);
+  formData.append('comment[body]', comment.value.body);
+
+  isLoading.value = true;
 
   axios
     .post(`api/v1/spots/${spot_id}/comments`, formData, { headers })
     .then((res) => {
-      alert('コメントを作成しました。')
+      alert('コメントを作成しました。');
+      errors.value = { title: null, body: null };
       router.push({
         name: 'comment_show',
         params: { id: res.data.spot_id, comment_id: res.data.comment_id }
-      })
+      });
     })
-    .catch(() => {
-      alert('コメントの作成に失敗しました。もう一度お試しください。')
+    .catch((error) => {
+      console.error('エラー:', error);
+      if (error.response && error.response.data.errors) {
+        console.log('バリデーションエラー:', error.response.data.errors);
+
+        const errorMessages = error.response.data.errors;
+        errors.value = {
+          title: errorMessages.title ? errorMessages.title.join('\n') : null,
+          body: errorMessages.body ? errorMessages.body.join('\n') : null
+        };
+      } else {
+        alert('コメントの作成に失敗しました。もう一度お試しください。');
+      }
     })
-}
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
 
 const fetchSpot = () => {
   const token = localStorage.getItem('access-token')
@@ -209,5 +255,31 @@ const fetchSpot = () => {
   margin-bottom: 16px !important;
   font-size: 1.5rem !important;
   font-weight: bold !important;
+}
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 999;
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff9800;
 }
 </style>
