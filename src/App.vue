@@ -11,4 +11,6 @@ import { RouterView } from 'vue-router'
 import 'normalize.css'
 </script>
 
-<style scoped></style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+</style>
