@@ -13,6 +13,8 @@
               class="mb-5"
               type="email"
               placeholder="アドレス"
+              hint="6文字以上255文字以内で入力してください"
+              persistent-hint
             />
             <v-text-field
               v-model="password"
@@ -22,6 +24,8 @@
               class="mb-5"
               type="password"
               placeholder="パスワード"
+              hint="6文字以上で入力してください"
+              persistent-hint
             />
             <v-text-field
               v-model="passwordConfirmation"
@@ -31,10 +35,10 @@
               class="mb-5"
               type="password"
               placeholder="パスワード確認"
+              hint="上記と同じパスワードを入力してください"
+              persistent-hint
             />
-            <v-btn color="primary" large block @click="signup">
-              サインアップ
-            </v-btn>
+            <v-btn color="primary" large block @click="signup"> サインアップ </v-btn>
           </v-form>
         </v-card>
       </v-col>
@@ -43,14 +47,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import axios from "../plugins/axios";
-import { useRouter } from "vue-router";
+import { ref } from 'vue'
+import axios from '../plugins/axios'
+import { useRouter } from 'vue-router'
 
-const email = ref("");
-const password = ref("");
-const passwordConfirmation = ref("");
-const router = useRouter();
+const email = ref('')
+const password = ref('')
+const passwordConfirmation = ref('')
+const router = useRouter()
 
 const signup = () => {
   axios
@@ -58,21 +62,21 @@ const signup = () => {
       `/api/v1/auth`,
       {
         email: email.value,
-        password: password.value,
+        password: password.value
       },
       { withCredentials: true }
     )
     .then((response) => {
-      localStorage.setItem("access-token", response.headers["access-token"]);
-      localStorage.setItem("client", response.headers["client"]);
-      localStorage.setItem("uid", response.headers["uid"]);
-      alert("登録しました。");
-      router.push({ path: "/" });
+      localStorage.setItem('access-token', response.headers['access-token'])
+      localStorage.setItem('client', response.headers['client'])
+      localStorage.setItem('uid', response.headers['uid'])
+      alert('登録しました。')
+      router.push({ path: '/' })
     })
     .catch(() => {
-      alert("登録に失敗しました。もう一度お試しください。");
-    });
-};
+      alert('登録に失敗しました。もう一度お試しください。')
+    })
+}
 </script>
 
 <style scoped>
@@ -120,4 +124,3 @@ h1 {
   }
 }
 </style>
-
