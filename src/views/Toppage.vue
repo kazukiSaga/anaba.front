@@ -139,16 +139,23 @@ const openInfoWindow = (id) => {
   margin-bottom: 20px;
 }
 
-.text-container h1 {
+/* .text-container h1 {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 3rem;
   color: orange;
   margin: 0;
+} */
+.text-container h1 {
+  font-family: 'Titan One', cursive;
+  font-size: 4rem;
+  color: orange;
+  margin: 0;
+  letter-spacing: 0.02em;
 }
 
 .text-container h1 .big-A {
-  font-size: 4.5rem;
+  font-size: 5.5rem;
 }
 
 .text-container ul {
