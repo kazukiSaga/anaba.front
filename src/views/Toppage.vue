@@ -18,6 +18,13 @@
       Anabaは自分のお気に入りの穴場スポットを登録し、写真とコメントで他者と共有することができるアプリです。
     </h2>
 
+    <p class="map-instruction" v-if="isMobile">
+      地図上のマーカーをタップすると、スポットの情報が表示されます。「詳細を見る」をタップすると、そのスポットの詳細ページをご覧いただけます。
+    </p>
+    <p class="map-instruction" v-else>
+      地図上のマーカーにカーソルを合わせると、スポットの情報が表示されます。「詳細を見る」をクリックすると、そのスポットの詳細ページをご覧いただけます。
+    </p>
+
     <v-row justify="center" class="map-container">
       <v-col cols="12" md="10" lg="8">
         <GoogleMap
@@ -33,9 +40,14 @@
             v-for="spot in spots"
             :key="spot.id"
             :options="markerOptions(spot)"
+            @click="openInfoWindow(spot.id)"
             @mouseover="openInfoWindow(spot.id)"
           >
-            <InfoWindow v-model="isInfoWindowVisible" v-if="infoWindowid === spot.id">
+            <InfoWindow
+              v-model="isInfoWindowVisible"
+              v-if="infoWindowid === spot.id"
+              class="info-window"
+            >
               <div>
                 <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.average_rating }} -
                 混雑の少なさ: {{ spot.average_quiet_rating }}
@@ -72,12 +84,19 @@ const center = { lat: 35.65856, lng: 139.745461 }
 const spots = ref([])
 const isInfoWindowVisible = ref(false)
 const infoWindowid = ref(null)
+const isMobile = ref(false)
 
 const router = useRouter()
 
 onMounted(() => {
   fetchSpots()
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
 })
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 600
+}
 
 const fetchSpots = () => {
   axios
@@ -166,8 +185,22 @@ const openInfoWindow = (id) => {
   font-size: 1.5rem;
   line-height: 1.5;
   margin: 15px auto 30px;
-  text-align: center;
+  text-align: left;
   max-width: 800px;
+  background: #fff6e6;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 5px solid orange;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.map-instruction {
+  font-size: 0.9rem;
+  text-align: left;
+  max-width: 800px;
+  margin: 0 auto 20px;
+  line-height: 1.4;
+  padding: 0 20px;
 }
 
 .full-background {
@@ -176,6 +209,15 @@ const openInfoWindow = (id) => {
   justify-content: space-between;
   flex-wrap: nowrap;
   padding: 30px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .info-window {
+    color: black !important;
+  }
+  ::v-deep(.gm-style-iw) {
+    color: black !important;
+  }
 }
 
 @media (max-width: 600px) {
@@ -215,7 +257,16 @@ const openInfoWindow = (id) => {
 
   .app-description {
     font-size: 1rem;
-    margin: 15px auto 30px;
+    margin: 15px 15px 30px;
+    text-align: left;
+    padding: 15px;
+  }
+
+  .map-instruction {
+    font-size: 0.8rem;
+    margin: 0 auto 15px;
+    padding: 0 15px;
+    text-align: left;
   }
 }
 
