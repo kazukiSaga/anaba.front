@@ -13,6 +13,8 @@
               class="mb-5"
               type="email"
               placeholder="アドレス"
+              hint="6文字以上255文字以内で入力してください"
+              persistent-hint
             />
             <v-text-field
               v-model="password"
@@ -22,6 +24,8 @@
               class="mb-5"
               type="password"
               placeholder="パスワード"
+              hint="6文字以上で入力してください"
+              persistent-hint
             />
             <v-btn color="primary" large block @click="login"> ログイン </v-btn>
           </v-form>
