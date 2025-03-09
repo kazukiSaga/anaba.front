@@ -4,21 +4,22 @@
       :label="'スポット検索'"
       v-model="q.name_cont"
       @input="searchSpots"
-      hint="スポット名を入力してください"
       persistent-hint
       variant="outlined"
       density="compact"
+      bg-color="white"
+      :hint-color="'black'"
     />
     <v-select
       :label="'都道府県検索'"
       class="mt-2"
       v-model="q.prefecture_id_eq"
-      hint="都道府県を選択してください"
       persistent-hint
       variant="outlined"
       density="compact"
       item-title="name"
       item-value="id"
+      bg-color="white"
       :items="prefectures"
       @update:modelValue="searchSpots"
     />
@@ -27,12 +28,12 @@
       :label="'タグ検索'"
       class="mt-2"
       v-model="q.spot_tags_tag_id_eq"
-      hint="タグを選択してください"
       persistent-hint
       variant="outlined"
       density="compact"
       item-title="name"
       item-value="id"
+      bg-color="white"
       :items="tags"
       @update:modelValue="searchSpots"
     />
@@ -162,7 +163,7 @@ const fetchSpots = (page) => {
       tags.value = res.data.tags
     })
     .catch(() => {
-      alert('スポット情報の取得に失敗しました。');
+      alert('スポット情報の取得に失敗しました。')
     })
 }
 
@@ -191,10 +192,19 @@ const searchSpots = () => {
       spots.value = res.data.spots
     })
     .catch(() => {
-      alert('検索結果の取得に失敗しました。');
+      alert('検索結果の取得に失敗しました。')
     })
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+:deep(.v-field__hint) {
+  color: white !important;
+}
+
+/* Alternative more specific selectors if the above doesn't work */
+:deep(.v-text-field .v-field__hint),
+:deep(.v-select .v-field__hint) {
+  color: white !important;
+}
 </style>

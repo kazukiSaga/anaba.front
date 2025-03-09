@@ -14,7 +14,7 @@
       </v-col>
     </v-row>
 
-    <h2 class="app-description">
+    <h2 class="app-description text-black">
       Anabaは自分のお気に入りの穴場スポットを登録し、写真とコメントで他者と共有することができるアプリです。
     </h2>
 
@@ -98,14 +98,70 @@ const checkMobile = () => {
   isMobile.value = window.innerWidth <= 600
 }
 
+// const fetchSpots = () => {
+//   axios
+//     .get('api/v1/marker_spots')
+//     .then((res) => {
+//       spots.value = res.data.spots
+//     })
+//     .catch(() => {
+//       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+//     })
+// }
+
+// const fetchSpots = () => {
+//   axios
+//     .get('api/v1/marker_spots')
+//     .then((res) => {
+//       spots.value = res.data.spots
+//     })
+//     .catch((error) => {
+//       console.error('スポット情報の取得に失敗しました。', error)
+//       // 401エラー（認証エラー）の場合は静かに失敗する
+//       if (error.response && error.response.status === 401) {
+//         spots.value = []
+//       } else {
+//         // その他のエラーの場合だけアラートを表示
+//         alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+//       }
+//     })
+// }
+
+// const fetchSpots = () => {
+//   axios
+//     .get('api/v1/marker_spots')
+//     .then((res) => {
+//       spots.value = res.data.spots
+//     })
+//     .catch((error) => {
+//       console.error('スポット情報の取得に失敗しました。', error)
+
+//       // どんなエラーでも、未ログイン時（401エラー）は静かに失敗する
+//       try {
+//         if (error.response && error.response.status === 401) {
+//           console.log('未ログイン状態です。スポット情報を表示しません。')
+//           spots.value = []
+//           return // エラーメッセージを表示せずに終了
+//         }
+//       } catch (e) {
+//         console.error('エラー処理中にさらにエラーが発生:', e)
+//       }
+
+//       // 未ログイン以外のエラーの場合のみアラートを表示
+//       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+//     })
+// }
+
 const fetchSpots = () => {
   axios
     .get('api/v1/marker_spots')
     .then((res) => {
       spots.value = res.data.spots
     })
-    .catch(() => {
-      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    .catch((error) => {
+      // エラーはコンソールに記録するが、アラートは表示しない
+      console.error('スポット情報の取得に失敗しました。', error)
+      spots.value = [] // エラー時は空の配列を設定
     })
 }
 
@@ -189,6 +245,7 @@ const openInfoWindow = (id) => {
 }
 
 .app-description {
+  color: black;
   font-size: 1.5rem;
   line-height: 1.5;
   margin: 15px auto 30px;
