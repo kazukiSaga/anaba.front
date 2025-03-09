@@ -50,11 +50,13 @@
 import { ref } from 'vue'
 import axios from '../plugins/axios'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/index'
 
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
 const router = useRouter()
+const userStore = useUserStore()
 
 const signup = () => {
   axios
@@ -72,6 +74,7 @@ const signup = () => {
       localStorage.setItem('uid', response.headers['uid'])
       alert('登録しました。')
       router.push({ path: '/' })
+      userStore.setUser(response.data)
     })
     .catch(() => {
       alert('登録に失敗しました。もう一度お試しください。')

@@ -36,20 +36,37 @@ const fetchUser = () => {
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
 
-  axios
-    .get(`/api/v1/users`, {
-      headers: {
-        'access-token': token,
-        client: client,
-        uid: uid
-      }
-    })
-    .then((res) => {
-      userStore.setUser(res.data.user)
-    })
-    .catch(() => {
-      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
-    })
+
+  if (token) {
+    axios
+      .get(`/api/v1/users`, {
+        headers: {
+          'access-token': token,
+          client: client,
+          uid: uid
+        }
+      })
+      .then((res) => {
+        userStore.setUser(res.data.user)
+      })
+      .catch(() => {
+        alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+      })
+    axios
+      .get(`/api/v1/users`, {
+        headers: {
+          'access-token': token,
+          client: client,
+          uid: uid
+        }
+      })
+      .then((res) => {
+        userStore.setUser(res.data.user)
+      })
+      .catch((error) => {
+        console.error('ユーザー情報の取得に失敗しました。', error)
+      })
+  }
 }
 
 const logout = () => {
