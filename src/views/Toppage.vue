@@ -3,11 +3,6 @@
     <v-row class="full-background" justify="center" align="center">
       <v-col cols="12" sm="6" md="6" class="text-container">
         <h1><span class="big-A">A</span>naba</h1>
-        <ul>
-          <li>
-            <router-link to="/spots">穴場スポット一覧</router-link>
-          </li>
-        </ul>
       </v-col>
       <v-col cols="12" sm="6" md="6" class="logo">
         <img src="@/assets/camera8.svg" alt="Logo" class="logo-image" />
@@ -62,6 +57,12 @@
       </v-col>
     </v-row>
 
+    <v-row class="full-background" justify="center" align="center">
+      <v-col cols="12" class="text-center">
+        <router-link to="/spots" class="spot-list-button">穴場スポット一覧</router-link>
+      </v-col>
+    </v-row>
+
     <v-row justify="center" class="privaryterms">
       <v-col cols="auto">
         <router-link to="/terms_of_use" class="terms-link">利用規約</router-link>
@@ -98,60 +99,6 @@ const checkMobile = () => {
   isMobile.value = window.innerWidth <= 600
 }
 
-// const fetchSpots = () => {
-//   axios
-//     .get('api/v1/marker_spots')
-//     .then((res) => {
-//       spots.value = res.data.spots
-//     })
-//     .catch(() => {
-//       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
-//     })
-// }
-
-// const fetchSpots = () => {
-//   axios
-//     .get('api/v1/marker_spots')
-//     .then((res) => {
-//       spots.value = res.data.spots
-//     })
-//     .catch((error) => {
-//       console.error('スポット情報の取得に失敗しました。', error)
-//       // 401エラー（認証エラー）の場合は静かに失敗する
-//       if (error.response && error.response.status === 401) {
-//         spots.value = []
-//       } else {
-//         // その他のエラーの場合だけアラートを表示
-//         alert('スポット情報の取得に失敗しました。もう一度お試しください。')
-//       }
-//     })
-// }
-
-// const fetchSpots = () => {
-//   axios
-//     .get('api/v1/marker_spots')
-//     .then((res) => {
-//       spots.value = res.data.spots
-//     })
-//     .catch((error) => {
-//       console.error('スポット情報の取得に失敗しました。', error)
-
-//       // どんなエラーでも、未ログイン時（401エラー）は静かに失敗する
-//       try {
-//         if (error.response && error.response.status === 401) {
-//           console.log('未ログイン状態です。スポット情報を表示しません。')
-//           spots.value = []
-//           return // エラーメッセージを表示せずに終了
-//         }
-//       } catch (e) {
-//         console.error('エラー処理中にさらにエラーが発生:', e)
-//       }
-
-//       // 未ログイン以外のエラーの場合のみアラートを表示
-//       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
-//     })
-// }
-
 const fetchSpots = () => {
   axios
     .get('api/v1/marker_spots')
@@ -159,9 +106,8 @@ const fetchSpots = () => {
       spots.value = res.data.spots
     })
     .catch((error) => {
-      // エラーはコンソールに記録するが、アラートは表示しない
       console.error('スポット情報の取得に失敗しました。', error)
-      spots.value = [] // エラー時は空の配列を設定
+      spots.value = []
     })
 }
 
@@ -195,13 +141,6 @@ const openInfoWindow = (id) => {
   margin-bottom: 20px;
 }
 
-/* .text-container h1 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 3rem;
-  color: orange;
-  margin: 0;
-} */
 .text-container h1 {
   font-family: 'Titan One', cursive;
   font-size: 4rem;
@@ -347,5 +286,21 @@ const openInfoWindow = (id) => {
   .logo {
     justify-content: flex-start;
   }
+}
+
+.spot-list-button {
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid orange;
+  border-radius: 8px;
+  background-color: #fff6e6;
+  transition: background-color 0.3s;
+}
+
+.spot-list-button:hover {
+  background-color: orange;
 }
 </style>
