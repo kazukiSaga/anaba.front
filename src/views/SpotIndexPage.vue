@@ -69,37 +69,7 @@
                 </v-chip>
               </div>
             </v-chip-group>
-            <v-text-field
-              :label="'タイトル'"
-              v-model="spot.name"
-              variant="outlined"
-              density="compact"
-              readonly
-            />
-            <v-textarea
-              :label="'説明'"
-              readonly
-              v-model="spot.body"
-              variant="outlined"
-              density="compact"
-            />
-            <v-select
-              :label="'都道府県'"
-              v-model="spot.prefecture_id"
-              variant="outlined"
-              density="compact"
-              item-title="name"
-              item-value="id"
-              :items="prefectures"
-              readonly
-            />
-            <v-text-field
-              v-model="spot.city"
-              :label="'市町村・番地'"
-              variant="outlined"
-              density="compact"
-              readonly
-            />
+            {{ prefectures.find(prefecture => prefecture.id === spot.prefecture_id)?.name }}
           </v-card-item>
         </v-card>
       </v-col>
@@ -199,11 +169,6 @@ const searchSpots = () => {
 
 <style lang="scss" scoped>
 :deep(.v-field__hint) {
-  color: white !important;
-}
-
-:deep(.v-text-field .v-field__hint),
-:deep(.v-select .v-field__hint) {
   color: white !important;
 }
 </style>
