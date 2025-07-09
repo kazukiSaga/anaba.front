@@ -54,7 +54,7 @@
           @click="router.push({ name: 'spot_show', params: { id: spot.id } })"
         >
           <v-card-item>
-            <v-card-title class="mt-2 mb-4 text-body-3">投稿一覧</v-card-title>
+            <v-card-title class="mt-2 mb-4 text-body-3">{{ spot.name }}</v-card-title>
             <v-chip-group column>
               <div class="text-body-1 mt-2">
                 タグ :
@@ -202,7 +202,6 @@ const searchSpots = () => {
   color: white !important;
 }
 
-/* Alternative more specific selectors if the above doesn't work */
 :deep(.v-text-field .v-field__hint),
 :deep(.v-select .v-field__hint) {
   color: white !important;
