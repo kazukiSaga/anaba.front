@@ -14,7 +14,7 @@ import MyPage from '../views/MyPage.vue'
 import NotFound from '../views/NotFound.vue'
 import TermsOfUsePage from '../views/TermsOfUsePage.vue'
 import PrivacyPolicyPage from '../views/PrivacyPolicyPage.vue'
-
+import GuidePage from '../views/GuidePage.vue'
 
 const routes = [
   {
@@ -95,6 +95,11 @@ const routes = [
     path: '/404',
     name: '404',
     component: NotFound
+  },
+  {
+    path: '/guide',
+    name: 'guide',
+    component: GuidePage
   }
 ]
 
