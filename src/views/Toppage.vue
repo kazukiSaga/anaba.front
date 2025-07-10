@@ -11,6 +11,9 @@
 
     <h2 class="app-description text-black">
       Anabaは自分のお気に入りの穴場スポットを登録し、写真とコメントで他者と共有することができるアプリです。
+      <div class="text-center mt-3">
+        <router-link to="/guide" class="guide-button">サイトの使い方詳細はこちら</router-link>
+      </div>
     </h2>
 
     <p class="map-instruction" v-if="isMobile">
@@ -302,5 +305,22 @@ const openInfoWindow = (id) => {
 
 .spot-list-button:hover {
   background-color: orange;
+}
+
+.guide-button {
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: white;                    
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #ff8c00;     
+  border-radius: 8px;
+  background-color: orange;      
+  transition: background-color 0.3s;
+}
+
+.guide-button:hover {
+  background-color: #ff8c00;      
+  color: white;                 
 }
 </style>
