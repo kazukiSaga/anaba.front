@@ -93,6 +93,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from '../plugins/axios';
+import { GoogleMap, Marker, InfoWindow } from 'vue3-google-map'
 
 const route = useRoute();
 const router = useRouter();
