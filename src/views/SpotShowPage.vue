@@ -26,6 +26,44 @@
             <div class="mb-2">
               <strong>平均混雑度：</strong>{{ spot.average_quiet_rating }}
             </div>
+
+            <v-row justify="center" class="map-container">
+              <v-col cols="12" md="10" lg="8">
+                <GoogleMap
+                  class="google-map"
+                  :api-key="apiKey"
+                  map-id="7eee96cd28abb9a0"
+                  style="width: 100%; height: 300px"
+                  :center="center"
+                  :zoom="9"
+                >
+                  <Marker :options="{ position: center }" />
+                  <Marker
+                    v-for="spot in spots"
+                    :key="spot.id"
+                    :options="markerOptions(spot)"
+                    @click="openInfoWindow(spot.id)"
+                    @mouseover="openInfoWindow(spot.id)"
+                  >
+                    <InfoWindow
+                      v-model="isInfoWindowVisible"
+                      v-if="infoWindowid === spot.id"
+                      class="info-window"
+                    >
+                      <div>
+                        <strong>{{ spot.name }}</strong> - おすすめ度: {{ spot.average_rating }} -
+                        混雑の少なさ: {{ spot.average_quiet_rating }}
+                        <br />
+                        <router-link :to="{ name: 'spot_show', params: { id: spot.id } }"
+                          >詳細を見る</router-link
+                        >
+                      </div>
+                    </InfoWindow>
+                  </Marker>
+                </GoogleMap>
+              </v-col>
+            </v-row>
+
             <v-divider class="my-4"></v-divider>
             <div class="mb-2">
               <strong>スポット名：</strong>{{ spot.name }}
