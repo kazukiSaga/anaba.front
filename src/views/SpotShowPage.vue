@@ -27,6 +27,33 @@
               <strong>平均混雑度：</strong>{{ spot.average_quiet_rating }}
             </div>
 
+            <v-divider class="my-4"></v-divider>
+            <div class="mb-2">
+              <strong>スポット名：</strong>{{ spot.name }}
+            </div>
+            <div class="mb-2">
+              <strong>タグ：</strong>
+              <v-chip
+                v-for="(tag, tagIndex) in spot.tags"
+                :key="tagIndex"
+                class="ma-1"
+                color="primary"
+                text-color="white"
+              >
+                {{ tag.name }}
+              </v-chip>
+            </div>
+            <div class="mb-2">
+              <strong>説明：</strong>{{ spot.body }}
+            </div>
+            <div class="mb-2">
+              <strong>都道府県：</strong>{{ spot.prefecture.name }}
+            </div>
+            <div class="mb-2">
+              <strong>市町村・番地：</strong>{{ spot.city }}
+            </div>
+          </v-card-text>
+
             <v-row justify="center" class="map-container">
               <v-col cols="12" md="10" lg="8">
                 <GoogleMap
@@ -63,33 +90,6 @@
                 </GoogleMap>
               </v-col>
             </v-row>
-
-            <v-divider class="my-4"></v-divider>
-            <div class="mb-2">
-              <strong>スポット名：</strong>{{ spot.name }}
-            </div>
-            <div class="mb-2">
-              <strong>タグ：</strong>
-              <v-chip
-                v-for="(tag, tagIndex) in spot.tags"
-                :key="tagIndex"
-                class="ma-1"
-                color="primary"
-                text-color="white"
-              >
-                {{ tag.name }}
-              </v-chip>
-            </div>
-            <div class="mb-2">
-              <strong>説明：</strong>{{ spot.body }}
-            </div>
-            <div class="mb-2">
-              <strong>都道府県：</strong>{{ spot.prefecture.name }}
-            </div>
-            <div class="mb-2">
-              <strong>市町村・番地：</strong>{{ spot.city }}
-            </div>
-          </v-card-text>
 
           <v-divider class="my-4"></v-divider>
 
@@ -165,6 +165,7 @@ const fetchSpot = () => {
   axios
     .get(`api/v1/spots/${id}`, { headers })
     .then((res) => {
+      console.log('レスポンス:', res.data);
       spot.value = res.data.spot;
     })
     .catch(() => {
