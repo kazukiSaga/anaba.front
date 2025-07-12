@@ -122,6 +122,8 @@ const assessment = ref({
   quiet_rating: null
 })
 
+const errors = ref([])
+
 onMounted(() => {
   fetchSpot()
 })
@@ -144,7 +146,7 @@ const fetchSpot = () => {
       }
     })
     .catch(() => {
-      errors.value = ['スポット情報の取得に失敗しました。もう一度お試しください。']
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
     })
 }
 
@@ -168,14 +170,13 @@ const createAssessment = () => {
       alert('評価しました。')
     })
     .catch(() => {
-      errors.value = ['評価の送信に失敗しました。もう一度お試しください。']
+      alert('評価の送信に失敗しました。評価を選んでいる確認してください')
     })
 }
 
 const redirectSpotEdit = () => {
   router.push({ name: 'spot_edit', params: { id: route.params.id } })
 }
-
 </script>
 
 <style scoped>
