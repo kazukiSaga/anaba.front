@@ -127,6 +127,19 @@ const removeTag = (tag) => {
   combo.value = spot.value.tags.map((t) => t.name);
 };
 
+const geocodeAddress = (address, callback) => {
+  const geocoder = new window.google.maps.Geocoder();
+  geocoder.geocode({ address }, (results, status) => {
+    if (status === "OK") {
+      latitude.value = results[0].geometry.location.lat();
+      longitude.value = results[0].geometry.location.lng();
+      callback();
+    } else {
+      errors.value = ["住所の変換に失敗しました"];
+    }
+  });
+};
+
 onMounted(() => {
   fetchSpot();
   new Loader({
