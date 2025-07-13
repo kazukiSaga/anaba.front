@@ -86,7 +86,7 @@ onMounted(() => {
       window.google = google;
     })
     .catch(() => {
-      alert("地図情報の取得に失敗しました。もう一度お試しください。");
+      alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
     });
 });
 
@@ -109,7 +109,7 @@ const fetchSpot = () => {
       errors.value = [];
     })
     .catch(() => {
-      alert("スポット情報の取得に失敗しました。もう一度お試しください。");
+      alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
     });
 };
 
@@ -156,9 +156,9 @@ const post = () => {
           uid: uid,
         },
       })
-      .then(() => {
+      .then((response) => {
         alert("投稿しました！");
-        router.push("/");
+        router.push(`/spots/${response.data.spot.id}`);
       })
       .catch((error) => {
         errors.value = error.response.data.errors || ["投稿に失敗しました"];
