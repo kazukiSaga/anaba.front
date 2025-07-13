@@ -129,6 +129,19 @@ const removeTag = (tag) => {
 
 onMounted(() => {
   fetchSpot();
+  new Loader({
+    apiKey,
+    version: "Release",
+    libraries: ["places", "drawing", "geometry", "visualization"],
+    language: "ja",
+  })
+  .load()
+  .then((google) => {
+    window.google = google;
+  })
+  .catch(() => {
+    alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
+  });
 });
 
 
