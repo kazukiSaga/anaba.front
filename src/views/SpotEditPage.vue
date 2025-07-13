@@ -88,6 +88,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { Loader } from "@googlemaps/js-api-loader";
 import { useRoute, useRouter } from 'vue-router';
 import axios from '../plugins/axios';
 
@@ -98,6 +99,10 @@ const tags = ref([]);
 const prefectures = ref([]);
 const errors = ref([]);
 const combo = ref([]);
+
+const latitude = ref(null);
+const longitude = ref(null);
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const spot = ref({
   name: null,
