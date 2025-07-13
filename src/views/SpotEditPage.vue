@@ -40,7 +40,6 @@
           style="position: relative;" 
         >
           {{ tag.name }}
-          <!-- バツボタン -->
           <img
             src="@/assets/closeicon.svg"
             alt="削除"
@@ -177,7 +176,7 @@ const updateSpot = () => {
     .put(`/api/v1/spots/${id}`, params, { headers })
     .then(() => {
       alert('更新しました。');
-      router.push({ name: 'spot_index' });
+      router.push(`/spots/${id}`);
     })
     .catch((error) => {
       if (error.response.data.errors) {
