@@ -36,23 +36,18 @@
           class="ma-1"
           color="primary"
           text-color="white"
-          @click="removeTag(tag)" 
-          style="position: relative;" 
+          @click="removeTag(tag)"
+          style="position: relative"
         >
           {{ tag.name }}
-          <img
-            src="@/assets/closeicon.svg"
-            alt="削除"
-            class="tag-delete-icon"
-          />
+          <img src="@/assets/closeicon.svg" alt="削除" class="tag-delete-icon" />
         </v-chip>
       </div>
-
 
       <v-combobox
         label="タグを選択もしくは新規登録"
         v-model="combo"
-        :items="tags.map(tag => tag.name)"
+        :items="tags.map((tag) => tag.name)"
         variant="outlined"
         density="compact"
         multiple
@@ -87,136 +82,143 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { Loader } from "@googlemaps/js-api-loader";
-import { useRoute, useRouter } from 'vue-router';
-import axios from '../plugins/axios';
+import { ref, onMounted } from 'vue'
+import { Loader } from '@googlemaps/js-api-loader'
+import { useRoute, useRouter } from 'vue-router'
+import axios from '../plugins/axios'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const tags = ref([]);
-const prefectures = ref([]);
-const errors = ref([]);
-const combo = ref([]);
+const tags = ref([])
+const prefectures = ref([])
+const errors = ref([])
+const combo = ref([])
 
-const latitude = ref(null);
-const longitude = ref(null);
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const latitude = ref(null)
+const longitude = ref(null)
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 
 const spot = ref({
   name: null,
   body: null,
   prefecture_id: null,
   city: null,
-  tags: [], 
-});
+  tags: []
+})
 
 const updateTags = (newTags) => {
   spot.value.tags = newTags.map((tagName) => {
-    const existingTag = tags.value.find((tag) => tag.name === tagName);
+    const existingTag = tags.value.find((tag) => tag.name === tagName)
     if (existingTag) {
-      return existingTag;
+      return existingTag
     }
-    return { id: null, name: tagName };
-  });
-};
+    return { id: null, name: tagName }
+  })
+}
 
 const removeTag = (tag) => {
-  spot.value.tags = spot.value.tags.filter((t) => t.name !== tag.name);
-  combo.value = spot.value.tags.map((t) => t.name);
-};
+  spot.value.tags = spot.value.tags.filter((t) => t.name !== tag.name)
+  combo.value = spot.value.tags.map((t) => t.name)
+}
 
 const geocodeAddress = (address, callback) => {
-  const geocoder = new window.google.maps.Geocoder();
+  const geocoder = new window.google.maps.Geocoder()
   geocoder.geocode({ address }, (results, status) => {
-    if (status === "OK") {
-      latitude.value = results[0].geometry.location.lat();
-      longitude.value = results[0].geometry.location.lng();
-      callback();
+    if (status === 'OK') {
+      latitude.value = results[0].geometry.location.lat()
+      longitude.value = results[0].geometry.location.lng()
+      callback()
     } else {
-      errors.value = ["住所の変換に失敗しました"];
+      errors.value = ['住所の変換に失敗しました']
     }
-  });
-};
+  })
+}
 
 onMounted(() => {
-  fetchSpot();
+  fetchSpot()
   new Loader({
     apiKey,
-    version: "Release",
-    libraries: ["places", "drawing", "geometry", "visualization"],
-    language: "ja",
+    version: 'Release',
+    libraries: ['places', 'drawing', 'geometry', 'visualization'],
+    language: 'ja'
   })
-  .load()
-  .then((google) => {
-    window.google = google;
-  })
-  .catch(() => {
-    alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
-  });
-});
-
+    .load()
+    .then((google) => {
+      window.google = google
+    })
+    .catch(() => {
+      alert('ページの読み込みに失敗しました。ページを再読み込みしてください。')
+    })
+})
 
 const fetchSpot = () => {
-  const token = localStorage.getItem('access-token');
-  const client = localStorage.getItem('client');
-  const uid = localStorage.getItem('uid');
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
   const headers = {
     'access-token': token,
     client: client,
-    uid: uid,
-  };
+    uid: uid
+  }
 
-  const id = route.params.id;
+  const id = route.params.id
   axios
     .get(`api/v1/spots/${id}/edit`, { headers })
     .then((res) => {
-      spot.value = res.data.spot;
-      prefectures.value = res.data.prefectures;
-      tags.value = res.data.tags;
-      combo.value = spot.value.tags.map((tag) => tag.name);
+      spot.value = res.data.spot
+      prefectures.value = res.data.prefectures
+      tags.value = res.data.tags
+      combo.value = spot.value.tags.map((tag) => tag.name)
     })
     .catch(() => {
-      alert('スポット情報の取得に失敗しました。もう一度お試しください。');
-    });
-};
-
+      alert('スポット情報の取得に失敗しました。もう一度お試しください。')
+    })
+}
 
 const updateSpot = () => {
-  const token = localStorage.getItem('access-token');
-  const client = localStorage.getItem('client');
-  const uid = localStorage.getItem('uid');
+  const token = localStorage.getItem('access-token')
+  const client = localStorage.getItem('client')
+  const uid = localStorage.getItem('uid')
   const headers = {
     'access-token': token,
     client: client,
-    uid: uid,
-  };
+    uid: uid
+  }
 
-  const params = {
-    name: spot.value.name,
-    body: spot.value.body,
-    prefecture_id: spot.value.prefecture_id,
-    city: spot.value.city, 
-    tags: spot.value.tags.map((tag) => tag.name), 
-  };
+  const selectedPrefecture = prefectures.value.find(
+    (prefecture) => prefecture.id === spot.value.prefecture_id
+  )
+  const address = `${selectedPrefecture?.name || ''} ${spot.value.city}`
 
-  const id = route.params.id;
+  geocodeAddress(address, () => {
+    const params = {
+      name: spot.value.name,
+      body: spot.value.body,
+      prefecture_id: spot.value.prefecture_id,
+      city: spot.value.city,
+      latitude: latitude.value,
+      longitude: longitude.value,
+      tags: spot.value.tags.map((tag) => tag.name)
+    }
 
-  axios
-    .put(`/api/v1/spots/${id}`, params, { headers })
-    .then(() => {
-      alert('更新しました。');
-      router.push(`/spots/${id}`);
-    })
-    .catch((error) => {
-      if (error.response.data.errors) {
-        errors.value = error.response.data.errors;
-      } else {
-        alert('更新に失敗しました。もう一度お試しください。');
-      }
-    });
-};
+    const id = route.params.id
+
+    axios
+      .put(`/api/v1/spots/${id}`, params, { headers })
+      .then(() => {
+        alert('更新しました。')
+        router.push(`/spots/${id}`)
+      })
+      .catch((error) => {
+        if (error.response.data.errors) {
+          errors.value = error.response.data.errors
+        } else {
+          alert('更新に失敗しました。もう一度お試しください。')
+        }
+      })
+  })
+}
 </script>
 
 <style scoped>
@@ -236,5 +238,3 @@ const updateSpot = () => {
   vertical-align: middle;
 }
 </style>
-
-
