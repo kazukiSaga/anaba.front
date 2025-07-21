@@ -5,6 +5,9 @@
         <li class="right-links">
           <router-link to="/">トップ</router-link>
           <router-link v-if="!loggedIn" to="/login">ログイン</router-link>
+          <button v-if="!loggedIn" @click="guestLogin" class="guest-login-btn">
+            ゲストログイン
+          </button>
           <router-link v-if="!loggedIn" to="/sign_up">ユーザー登録</router-link>
           <button v-if="loggedIn" @click="redirectSpotNew">スポット投稿</button>
           <button v-if="loggedIn" @click="logout">ログアウト</button>
@@ -36,7 +39,6 @@ const fetchUser = () => {
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
 
-
   if (token) {
     axios
       .get(`/api/v1/users`, {
@@ -66,6 +68,31 @@ const fetchUser = () => {
       .catch((error) => {
         console.error('ユーザー情報の取得に失敗しました。', error)
       })
+  }
+}
+
+// ゲストログイン処理を追加
+const guestLogin = async () => {
+  try {
+    const response = await axios.post('api/v1/auth/guest_sign_in')
+
+    console.log(response)
+
+    // 認証情報を保存
+    localStorage.setItem('access-token', response.headers['access-token'])
+    localStorage.setItem('client', response.headers['client'])
+    localStorage.setItem('uid', response.headers['uid'])
+
+    // ユーザー情報をストアに保存
+    userStore.setUser(response.data.data)
+
+    alert('ゲストログインしました！')
+
+    // スポット一覧ページに移動
+    router.push('/spots')
+  } catch (error) {
+    console.error('ゲストログインエラー:', error)
+    alert('ゲストログインに失敗しました。')
   }
 }
 
@@ -151,6 +178,19 @@ button {
 a:hover,
 button:hover {
   text-decoration: underline;
+}
+
+/* ゲストログインボタンのスタイル追加 */
+.guest-login-btn {
+  background-color: #4caf50;
+  color: white !important;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.guest-login-btn:hover {
+  background-color: #45a049;
+  text-decoration: none;
 }
 
 @media (min-width: 1024px) {
