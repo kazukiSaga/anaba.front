@@ -71,24 +71,20 @@ const fetchUser = () => {
   }
 }
 
-// ゲストログイン処理を追加
 const guestLogin = async () => {
   try {
     const response = await axios.post('api/v1/auth/guest_sign_in')
 
     console.log(response)
 
-    // 認証情報を保存
     localStorage.setItem('access-token', response.headers['access-token'])
     localStorage.setItem('client', response.headers['client'])
     localStorage.setItem('uid', response.headers['uid'])
 
-    // ユーザー情報をストアに保存
     userStore.setUser(response.data.data)
 
     alert('ゲストログインしました！')
 
-    // スポット一覧ページに移動
     router.push('/spots')
   } catch (error) {
     console.error('ゲストログインエラー:', error)
@@ -180,7 +176,6 @@ button:hover {
   text-decoration: underline;
 }
 
-/* ゲストログインボタンのスタイル追加 */
 .guest-login-btn {
   background-color: #4caf50;
   color: white !important;
