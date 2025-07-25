@@ -85,7 +85,7 @@ const guestLogin = async () => {
 
     alert('ゲストログインしました！')
 
-    router.push('/spots')
+    router.push('/')
   } catch (error) {
     console.error('ゲストログインエラー:', error)
     alert('ゲストログインに失敗しました。')
