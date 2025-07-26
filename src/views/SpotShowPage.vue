@@ -21,7 +21,12 @@
             >
               コメント投稿ページへ
             </v-btn>
-            <v-btn class="custom-btn mx-2" color="orange" @click="redirectSpotEdit">
+            <v-btn
+              v-if="loggedIn"
+              class="custom-btn mx-2"
+              color="orange"
+              @click="router.push({ name: 'spot_edit', params: { id: route.params.id } })"
+            >
               編集ページへ
             </v-btn>
           </v-row>
