@@ -92,6 +92,7 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/index'
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../plugins/axios'
@@ -105,7 +106,17 @@ const fileError = ref(null)
 const isLoading = ref(false)
 const errors = ref({ title: null, body: null })
 
+const userStore = useUserStore()
+
+const loggedIn = computed(() => {
+  return Object.keys(userStore.getUser).length !== 0
+})
+
 onMounted(() => {
+  if (!loggedIn.value) {
+    router.push('/login')
+    return
+  }
   fetchSpot()
 })
 
