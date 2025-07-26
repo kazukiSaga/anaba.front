@@ -14,6 +14,7 @@
               コメント一覧ページへ
             </v-btn>
             <v-btn
+              v-if="loggedIn"
               class="custom-btn mx-2"
               color="green"
               @click="router.push({ name: 'comment_new' })"
@@ -96,10 +97,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { useUserStore } from '@/stores/index'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../plugins/axios'
 import { GoogleMap, Marker } from 'vue3-google-map'
+
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
 const center = ref({ lat: 35.65856, lng: 139.745461 })
@@ -120,6 +123,11 @@ const spot = ref({
 const assessment = ref({
   rating: null,
   quiet_rating: null
+})
+
+const userStore = useUserStore()
+const loggedIn = computed(() => {
+  return Object.keys(userStore.getUser).length !== 0
 })
 
 const errors = ref([])
