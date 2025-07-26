@@ -82,11 +82,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
+import { useUserStore } from '@/stores/index'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../plugins/axios'
 
+const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -105,6 +107,10 @@ const spot = ref({
   prefecture_id: null,
   city: null,
   tags: []
+})
+
+const loggedIn = computed(() => {
+  return Object.keys(userStore.getUser).length !== 0
 })
 
 const updateTags = (newTags) => {
@@ -136,6 +142,10 @@ const geocodeAddress = (address, callback) => {
 }
 
 onMounted(() => {
+  if (!loggedIn.value) {
+    router.push('/login')
+    return
+  }
   fetchSpot()
   new Loader({
     apiKey,
