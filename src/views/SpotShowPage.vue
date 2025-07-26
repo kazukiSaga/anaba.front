@@ -71,8 +71,8 @@
 
           <v-divider class="my-4"></v-divider>
 
-          <div class="text-center mb-4">評価をして他のユーザーに情報を共有しましょう</div>
-          <v-row justify="center">
+          <div v-if="loggedIn" class="text-center mb-4">評価をして他のユーザーに情報を共有しましょう</div>
+          <v-row v-if="loggedIn" justify="center">
             <v-col cols="12" sm="6">
               <v-select
                 :label="'おすすめ度'"
@@ -92,7 +92,7 @@
               />
             </v-col>
           </v-row>
-          <v-row justify="center" class="mt-4">
+          <v-row v-if="loggedIn" justify="center" class="mt-4">
             <v-btn class="custom-btn" color="orange" @click="createAssessment"> 送信 </v-btn>
           </v-row>
         </v-card>
