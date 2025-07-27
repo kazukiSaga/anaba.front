@@ -54,10 +54,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "../plugins/axios";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useRouter } from "vue-router";
+import { useUserStore } from '@/stores/index'
 
 const prefectures = ref([]);
 const tags = ref([]);
@@ -71,9 +72,31 @@ const latitude = ref(null);
 const longitude = ref(null);
 const router = useRouter();
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const userStore = useUserStore()
 
-onMounted(() => {
-  fetchSpot();
+const loggedIn = computed(() => {
+  return Object.keys(userStore.getUser).length !== 0
+})
+
+onMounted(async () => {
+  const token = localStorage.getItem('access-token')
+
+  if (!token) {
+    router.push('/login')
+    return
+  }
+
+  try {
+    await fetchSpot()
+
+    if (!loggedIn.value) {
+      router.push('/login')
+      return
+    }
+  } catch (error) {
+    router.push('/login')
+    return
+  }
 
   new Loader({
     apiKey,
@@ -90,12 +113,12 @@ onMounted(() => {
     });
 });
 
-const fetchSpot = () => {
+const fetchSpot = async () => {
   const token = localStorage.getItem("access-token");
   const client = localStorage.getItem("client");
   const uid = localStorage.getItem("uid");
 
-  axios
+  return axios
     .get("/api/v1/spots/new", {
       headers: {
         "access-token": token,
@@ -107,9 +130,15 @@ const fetchSpot = () => {
       prefectures.value = res.data.prefectures;
       tags.value = res.data.tags;
       errors.value = [];
+      userStore.setUser(res.data.user || { id: 1, name: 'ユーザー' });
     })
-    .catch(() => {
-      alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
+    .catch((error) => {
+      if (error.response?.status === 401) {
+        alert("ログインが必要です");
+        router.push('/login');
+      } else {
+        alert("ページの読み込みに失敗しました。ページを再読み込みしてください。");
+      }
     });
 };
 
@@ -205,5 +234,3 @@ const post = () => {
   }
 }
 </style>
-
-
