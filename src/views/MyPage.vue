@@ -6,18 +6,24 @@
 
           <v-card-title class="text-h5 text-center">マイページ</v-card-title>
           <v-divider class="mb-4"></v-divider>
-
+          <v-alert v-if="isGuest" type="info" class="mb-4">
+            ゲストユーザーです。本登録すると情報を編集できます。
+          </v-alert>
+          
           <v-form>
             <v-text-field
               label="ニックネーム"
               v-model="user.name"
-              outlined
-              dense
+              :outlined="!isGuest"
+              :dense="true"
+              :readonly="isGuest"
+              :variant="isGuest ? 'plain' : undefined"
               class="mb-4"
             ></v-text-field>
 
             <div class="button-wrapper">
               <v-btn
+                v-if="!isGuest"
                 color="orange"
                 class="post-btn"
                 @click="updateUsername"
@@ -43,18 +49,46 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "../plugins/axios";
+import { useUserStore } from '@/stores/index'
+import { useRouter } from 'vue-router'
 
 const user = ref({ name: "" });
 const updateMessage = ref("");
+const userStore = useUserStore()
+const router = useRouter()
 
-onMounted(() => {
-  fetchUserName();
-});
+const loggedIn = computed(() => {
+  return Object.keys(userStore.getUser).length !== 0
+})
 
-const fetchUserName = () => {
-  axios
+const isGuest = computed(() => {
+  const user = userStore.getUser
+  return user.email === 'guest@example.com'
+})
+
+onMounted(async () => {
+    const token = localStorage.getItem('access-token')
+
+    if (!token) {
+      router.push('/login')
+      return
+    }
+
+    try {
+      await fetchUserName()
+
+      if (!loggedIn.value) {
+        router.push('/login')
+      }
+    } catch (error) {
+      router.push('/login')
+    }
+  });
+
+const fetchUserName = async () => {
+  return axios
     .get("/api/v1/auth/validate_token", {
       headers: {
         "access-token": localStorage.getItem("access-token"),
@@ -64,11 +98,12 @@ const fetchUserName = () => {
     })
     .then((response) => {
       user.value.name = response.data.data.name;
+      userStore.setUser(response.data.data);
       const userId = response.data.data.id;
       if (userId) localStorage.setItem("user_id", userId);
     })
     .catch(() => {
-      alert("ユーザー名の取得に失敗しました。もう一度お試しください。");
+      alert("ユーザー情報の取得に失敗しました");
     });
 };
 
