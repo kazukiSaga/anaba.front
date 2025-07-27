@@ -141,12 +141,26 @@ const geocodeAddress = (address, callback) => {
   })
 }
 
-onMounted(() => {
-  if (!loggedIn.value) {
+onMounted(async () => {
+  const token = localStorage.getItem('access-token')
+
+  if (!token) {
     router.push('/login')
     return
   }
-  fetchSpot()
+
+  try {
+    await fetchSpot()
+
+    if (!loggedIn.value) {
+      router.push('/login')
+      return
+    }
+  } catch (error) {
+    router.push('/login')
+    return
+  }
+
   new Loader({
     apiKey,
     version: 'Release',
@@ -162,7 +176,7 @@ onMounted(() => {
     })
 })
 
-const fetchSpot = () => {
+const fetchSpot = async () => {
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
@@ -173,13 +187,14 @@ const fetchSpot = () => {
   }
 
   const id = route.params.id
-  axios
+  return axios
     .get(`api/v1/spots/${id}/edit`, { headers })
     .then((res) => {
       spot.value = res.data.spot
       prefectures.value = res.data.prefectures
       tags.value = res.data.tags
       combo.value = spot.value.tags.map((tag) => tag.name)
+      userStore.setUser(res.data.user || { id: 1, name: 'ユーザー' });
     })
     .catch(() => {
       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
