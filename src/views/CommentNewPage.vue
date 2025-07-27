@@ -112,12 +112,23 @@ const loggedIn = computed(() => {
   return Object.keys(userStore.getUser).length !== 0
 })
 
-onMounted(() => {
-  if (!loggedIn.value) {
+onMounted(async () => {
+  const token = localStorage.getItem('access-token')
+
+  if (!token) {
     router.push('/login')
     return
   }
-  fetchSpot()
+
+  try {
+    await fetchSpot()
+
+    if (!loggedIn.value) {
+      router.push('/login')
+    }
+  } catch (error) {
+    router.push('/login')
+  }
 })
 
 const setImage = (e) => {
@@ -189,7 +200,7 @@ const createComment = () => {
     })
 }
 
-const fetchSpot = () => {
+const fetchSpot = async () => {
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
@@ -200,10 +211,11 @@ const fetchSpot = () => {
   }
 
   const spot_id = route.params.id
-  axios
+  return axios
     .get(`api/v1/spots/${spot_id}/comments/new`, { headers })
     .then((res) => {
       spot.value = res.data.spot
+      userStore.setUser(res.data.user || { id: 1, name: 'ユーザー' });
     })
     .catch(() => {
       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
