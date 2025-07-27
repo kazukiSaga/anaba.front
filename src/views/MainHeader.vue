@@ -11,7 +11,7 @@
           <router-link v-if="!loggedIn" to="/sign_up">ユーザー登録</router-link>
           <button v-if="loggedIn" @click="redirectSpotNew">スポット投稿</button>
           <button v-if="loggedIn" @click="logout">ログアウト</button>
-          <button v-if="loggedIn" @click="MyPage">マイページ</button>
+          <button v-if="loggedIn && !isGuest" @click="MyPage">マイページ</button>
         </li>
       </ul>
     </nav>
@@ -28,6 +28,11 @@ const userStore = useUserStore()
 
 const loggedIn = computed(() => {
   return Object.keys(userStore.getUser).length !== 0
+})
+
+const isGuest = computed(() => {
+  const user = userStore.getUser
+  return user.email === 'guest@example.com'
 })
 
 onMounted(() => {
