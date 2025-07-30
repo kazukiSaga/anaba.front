@@ -70,11 +70,11 @@ const fetchSpot = () => {
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
-  const headers = { 'access-token': token, uid: uid, client: client }
+  const headers = token ? { 'access-token': token, uid: uid, client: client } : {}
 
   const spot_id = route.params.id
   axios
-    .get(`api/v1/spots/${spot_id}/comments/new`, { headers })
+    .get(`api/v1/spots/${spot_id}`, { headers })
     .then((res) => (spot.value = res.data.spot))
     .catch(() => {
       alert('スポット情報の取得に失敗しました。もう一度お試しください。')
@@ -85,7 +85,7 @@ const fetchComment = () => {
   const token = localStorage.getItem('access-token')
   const client = localStorage.getItem('client')
   const uid = localStorage.getItem('uid')
-  const headers = { 'access-token': token, uid: uid, client: client }
+  const headers = token ? { 'access-token': token, uid: uid, client: client } : {}
 
   const spot_id = route.params.id
   const comment_id = route.params.comment_id
@@ -133,5 +133,4 @@ watch(
   width: 100% !important;
   height: auto !important;
 }
-
 </style>
